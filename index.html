@@ -225,20 +225,20 @@
             
             PLAYER_SPEED_SCALED = 7 * scaleFactor; 
             JUMP_FORCE_SCALED = -15 * scaleFactor;
-            ATTACK_RANGE_SCALED = (basePlayerWidth * 0.4) * scaleFactor; // Ajustado para ser relativo ao tamanho do personagem
+            ATTACK_RANGE_SCALED = (basePlayerWidth * 0.4) * scaleFactor;
         }
         
         const screens = { 
             modeSelect: document.getElementById('modeSelectScreen'), 
             p1CharSelect: document.getElementById('p1CharSelectScreen'), 
             cpuCharSelect: document.getElementById('cpuCharSelectScreen'), 
-            arenaSelect: document.getElementById('arenaSelectScreen'), // Nova tela
+            arenaSelect: document.getElementById('arenaSelectScreen'),
             difficultySelect: document.getElementById('difficultySelectScreen'),
         };
         const gameContainer = document.getElementById('gameContainer');
         const p1CharOptionsContainer = document.getElementById('p1CharacterOptions'); 
         const cpuCharOptionsContainer = document.getElementById('cpuCharacterOptions');
-        const arenaOptionsContainer = document.getElementById('arenaOptionsContainer'); // Container para botões de arena
+        const arenaOptionsContainer = document.getElementById('arenaOptionsContainer');
         const messageArea = document.getElementById('messageArea');
         const player1HealthBarEl = document.getElementById('player1HealthBar'); const player1HealthBarNameEl = document.getElementById('player1HealthBarName');
         const player2HealthBarEl = document.getElementById('player2HealthBar'); const player2HealthBarNameEl = document.getElementById('player2HealthBarName');
@@ -275,6 +275,7 @@
         const OPPONENT_SPECIAL_HIT_FALL_DURATION = 2000; 
         const MAX_ROUNDS = 3; 
         const ROUND_END_DELAY = 3000; 
+        const WALK_ANIM_FRAME_DURATION = 8; // Velocidade da animação de caminhada
         
         const MAGAL_SPECIAL_SETUP_BAR_DURATION = 800; 
         const MAGAL_SPECIAL_DRINK_DURATION_PER_BOTTLE = 1500; 
@@ -296,7 +297,7 @@
         let currentP1CharIndex = 0, currentCpuCharIndex = 0; 
         let selectedP1Char = null, selectedCpuChar = null; 
         let selectedDifficulty = null; let gameMode = 'pvcpu'; 
-        let selectedArenaBg = 'img/condominio_bg.jpg'; // Arena Padrão
+        let selectedArenaBg = 'img/condominio_bg.jpg'; 
         let currentScreen = 'modeSelect';
         let matchOver = false; let players = [null, null]; const keys = {}; 
         let screenShakeActive = false, currentScreenShakeIntensity = 0, currentScreenShakeDuration = 0, lastTime = 0;
@@ -332,219 +333,231 @@
             playerSprites[key].onerror = (e) => { console.warn(`Erro ao carregar o sprite ${key} de ${src}.`); imagesLoadedCount++; checkAllImagesProcessed(); };
         }
 
-        const SPRITE_W = 75; // Base width for sprites
-        const SPRITE_H = 113; // Base height for sprites
+        const SPRITE_W = 150; // Base width for new sprite placeholders (ajustado ao novo tamanho base)
+        const SPRITE_H = 225; // Base height for new sprite placeholders
 
         // --- CARREGAMENTO DE SPRITES ---
         // VINI
-        loadImage('vini_idle', 'img/cassiano.png'); // Substitua pelo seu caminho real
-        loadImage('vini_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_WALK`);
-        loadImage('vini_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_JUMP`);
-        loadImage('vini_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_CROUCH`);
-        loadImage('vini_defend', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_DEFEND`);
-        loadImage('vini_punch_st', `img/vini soco.png`);
-        loadImage('vini_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_KICK_ST`);
-        loadImage('vini_punch_cr', `img/soco baixo vini.png`);
-        loadImage('vini_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_KICK_CR`);
-        loadImage('vini_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_PUNCH_AIR`);
-        loadImage('vini_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_KICK_AIR`);
-        loadImage('vini_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_SPECIAL`);
-        loadImage('vini_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_HIT`);
-        loadImage('vini_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_KD_FALL`);
-        loadImage('vini_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/4299e1/white?text=V_KD_GROUND`);
+        loadImage('vini_idle', 'img/vini/cassiano.png'); 
+        loadImage('vini_walk_rf', `img/vini/vini_andando1.png`); 
+        loadImage('vini_walk_pass', `img/vini/cassiano.png`); 
+        loadImage('vini_walk_lf', `img/vini/vini_andando2.png`); 
+        loadImage('vini_jump', `img/vini/vini pulando.png`);
+        loadImage('vini_crouch', `img/vini/vini_defendendo.png`);
+        loadImage('vini_defend', `img/vini/vini_defendendo.png`);
+        loadImage('vini_punch_st', `img/vini/vini soco.png`);
+        loadImage('vini_kick_st', `img/vini/vini_chute.png`);
+        loadImage('vini_punch_cr', `img/vini/soco baixo vini.png`);
+        loadImage('vini_kick_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/4299e1/white?text=V_KICK_CR`);
+        loadImage('vini_punch_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/4299e1/white?text=V_PUNCH_AIR`);
+        loadImage('vini_kick_air', `img/vini/vini_vuadora.png`);
+        loadImage('vini_special_anim', `img/vini/vini_rage-removebg-preview.png`);
+        loadImage('vini_hit', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/4299e1/white?text=V_HIT`);
+        loadImage('vini_kd_fall', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/4299e1/white?text=V_KD_FALL`);
+        loadImage('vini_kd_ground', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/4299e1/white?text=V_KD_GROUND`);
 
         // MAGAL
-        loadImage('magal_idle', 'img/magal.png'); // Substitua
-        loadImage('magal_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_WALK`);
-        loadImage('magal_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_JUMP`);
-        loadImage('magal_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_CROUCH`);
-        loadImage('magal_defend', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_DEFEND`);
-        loadImage('magal_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_PUNCH_ST`);
-        loadImage('magal_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_KICK_ST`);
-        loadImage('magal_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_PUNCH_CR`);
-        loadImage('magal_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_KICK_CR`);
-        loadImage('magal_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_PUNCH_AIR`);
-        loadImage('magal_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_KICK_AIR`);
-        loadImage('magal_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_SPECIAL`);
-        loadImage('magal_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_HIT`);
-        loadImage('magal_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_KD_FALL`);
-        loadImage('magal_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/f56565/white?text=M_KD_GROUND`);
+        loadImage('magal_idle', 'img/magal/magal.png'); 
+        loadImage('magal_walk_rf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_WALK_RF`);
+        loadImage('magal_walk_pass', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_WALK_PASS`);
+        loadImage('magal_walk_lf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_WALK_LF`);
+        loadImage('magal_jump', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_JUMP`);
+        loadImage('magal_crouch', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_CROUCH`);
+        loadImage('magal_defend', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_DEFEND`);
+        loadImage('magal_punch_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_PUNCH_ST`);
+        loadImage('magal_kick_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_KICK_ST`);
+        loadImage('magal_punch_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_PUNCH_CR`);
+        loadImage('magal_kick_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_KICK_CR`);
+        loadImage('magal_punch_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_PUNCH_AIR`);
+        loadImage('magal_kick_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_KICK_AIR`);
+        loadImage('magal_special_anim', `img/magal/magal.png`);
+        loadImage('magal_hit', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_HIT`);
+        loadImage('magal_kd_fall', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_KD_FALL`);
+        loadImage('magal_kd_ground', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/f56565/white?text=M_KD_GROUND`);
 
         // PEDRO
-        loadImage('pedro_idle', 'img/predo.png'); // Substitua
-        loadImage('pedro_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_WALK`);
-        // ... (copie e adapte para todos os estados do Pedro)
-        loadImage('pedro_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_JUMP`);
-        loadImage('pedro_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_CROUCH`);
-        loadImage('pedro_defend', `img/pedro guarda.png`);
-        loadImage('pedro_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_PUNCH_ST`);
-        loadImage('pedro_kick_st', `img/predo chute.png`);
-        loadImage('pedro_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_PUNCH_AIR`);
-        loadImage('pedro_kick_air', `img/vuadora predo.png`);
-        loadImage('pedro_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_PUNCH_CR`);
-        loadImage('pedro_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_KICK_CR`);
-        loadImage('pedro_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_SPECIAL`);
-        loadImage('pedro_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_HIT`);
-        loadImage('pedro_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_KD_FALL`);
-        loadImage('pedro_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_KD_GROUND`);
-
+        loadImage('pedro_idle', 'img/pedro/predo.png');
+        loadImage('pedro_walk_rf', `img/pedro/pedroandando 1.png`);
+        loadImage('pedro_walk_pass', `img/pedro/pedro andando2.png`);
+        loadImage('pedro_walk_lf', `img/pedro/pedroandando 3.png`);
+        loadImage('pedro_jump', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/48bb78/white?text=P_JUMP`);
+        loadImage('pedro_crouch', `img/pedro/pedro guarda.png`);
+        loadImage('pedro_defend', `img/pedro/pedro guarda.png`);
+        loadImage('pedro_punch_st', `img/pedro/pedro murro.png`);
+        loadImage('pedro_kick_st', `img/pedro/predo chute.png`);
+        loadImage('pedro_punch_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/48bb78/white?text=P_PUNCH_AIR`);
+        loadImage('pedro_kick_air', `img/pedro/vuadora predo.png`);
+        loadImage('pedro_punch_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/48bb78/white?text=P_PUNCH_CR`);
+        loadImage('pedro_kick_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/48bb78/white?text=P_KICK_CR`);
+        loadImage('pedro_special_anim', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/48bb78/white?text=P_SPECIAL`);
+        loadImage('pedro_hit', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/48bb78/white?text=P_HIT`);
+        loadImage('pedro_kd_fall', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/48bb78/white?text=P_KD_FALL`);
+        loadImage('pedro_kd_ground', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/48bb78/white?text=P_KD_GROUND`);
 
         // MARKIN
-        loadImage('markin_idle', 'img/chipa.png'); // Substitua
-        loadImage('markin_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_WALK`);
-        // ... (copie e adapte para todos os estados do Markin)
-        loadImage('markin_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_JUMP`);
-        loadImage('markin_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_CROUCH`);
-        loadImage('markin_defend', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_DEFEND`);
-        loadImage('markin_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_PUNCH_ST`);
-        loadImage('markin_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_KICK_ST`);
-        loadImage('markin_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_PUNCH_AIR`);
-        loadImage('markin_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_KICK_AIR`);
-        loadImage('markin_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_PUNCH_CR`);
-        loadImage('markin_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_KICK_CR`);
-        loadImage('markin_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_SPECIAL`);
-        loadImage('markin_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_HIT`);
-        loadImage('markin_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_KD_FALL`);
-        loadImage('markin_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_KD_GROUND`);
+        loadImage('markin_idle', 'img/mp/chipa.png'); 
+        loadImage('markin_walk_rf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_WALK_RF`);
+        loadImage('markin_walk_pass', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_WALK_PASS`);
+        loadImage('markin_walk_lf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_WALK_LF`);
+        loadImage('markin_jump', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_JUMP`);
+        loadImage('markin_crouch', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_CROUCH`);
+        loadImage('markin_defend', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_DEFEND`);
+        loadImage('markin_punch_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_PUNCH_ST`);
+        loadImage('markin_kick_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_KICK_ST`);
+        loadImage('markin_punch_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_PUNCH_AIR`);
+        loadImage('markin_kick_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_KICK_AIR`);
+        loadImage('markin_punch_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_PUNCH_CR`);
+        loadImage('markin_kick_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_KICK_CR`);
+        loadImage('markin_special_anim', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_SPECIAL`);
+        loadImage('markin_hit', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_HIT`);
+        loadImage('markin_kd_fall', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_KD_FALL`);
+        loadImage('markin_kd_ground', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/06b6d4/white?text=MK_KD_GROUND`);
 
         // FREITAS
-        loadImage('freitas_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_IDLE`);
-        loadImage('freitas_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_WALK`);
-        // ... (copie e adapte para todos os estados do Freitas)
-        loadImage('freitas_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_JUMP`);
-        loadImage('freitas_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_CROUCH`);
-        loadImage('freitas_defend', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_DEFEND`);
-        loadImage('freitas_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_PUNCH_ST`);
-        loadImage('freitas_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_KICK_ST`);
-        loadImage('freitas_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_PUNCH_AIR`);
-        loadImage('freitas_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_KICK_AIR`);
-        loadImage('freitas_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_PUNCH_CR`);
-        loadImage('freitas_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_KICK_CR`);
-        loadImage('freitas_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_SPECIAL`);
-        loadImage('freitas_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_HIT`);
-        loadImage('freitas_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_KD_FALL`);
-        loadImage('freitas_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_KD_GROUND`);
+        loadImage('freitas_idle', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_IDLE`);
+        loadImage('freitas_walk_rf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_WALK_RF`);
+        loadImage('freitas_walk_pass', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_WALK_PASS`);
+        loadImage('freitas_walk_lf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_WALK_LF`);
+        loadImage('freitas_jump', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_JUMP`);
+        loadImage('freitas_crouch', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_CROUCH`);
+        loadImage('freitas_defend', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_DEFEND`);
+        loadImage('freitas_punch_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_PUNCH_ST`);
+        loadImage('freitas_kick_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_KICK_ST`);
+        loadImage('freitas_punch_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_PUNCH_AIR`);
+        loadImage('freitas_kick_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_KICK_AIR`);
+        loadImage('freitas_punch_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_PUNCH_CR`);
+        loadImage('freitas_kick_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_KICK_CR`);
+        loadImage('freitas_special_anim', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_SPECIAL`);
+        loadImage('freitas_hit', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_HIT`);
+        loadImage('freitas_kd_fall', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_KD_FALL`);
+        loadImage('freitas_kd_ground', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/d946ef/white?text=F_KD_GROUND`);
 
-        // BJ (NOVO)
-        loadImage('bj_idle', `img/bj_parado-removebg-preview.png`);
-        loadImage('bj_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_WALK`);
-        loadImage('bj_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_JUMP`);
-        loadImage('bj_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_CROUCH`);
-        loadImage('bj_defend', `img/bj_guarda-removebg-preview.png`);
-        loadImage('bj_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_PUNCH_ST`);
-        loadImage('bj_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_KICK_ST`);
-        loadImage('bj_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_PUNCH_CR`);
-        loadImage('bj_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_KICK_CR`);
-        loadImage('bj_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_PUNCH_AIR`);
-        loadImage('bj_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_KICK_AIR`);
-        loadImage('bj_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_SPECIAL`);
-        loadImage('bj_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_HIT`);
-        loadImage('bj_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_KD_FALL`);
-        loadImage('bj_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/ff8c00/white?text=BJ_KD_GROUND`);
+        // BJ 
+        loadImage('bj_idle', `img/bj/bj_parado-removebg-preview.png`);
+        loadImage('bj_walk_rf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_WALK_RF`);
+        loadImage('bj_walk_pass', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_WALK_PASS`);
+        loadImage('bj_walk_lf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_WALK_LF`);
+        loadImage('bj_jump', `img/bj/bj_pulando-removebg-preview.png`);
+        loadImage('bj_crouch', `img/bj/bj_guarda-removebg-preview.png`);
+        loadImage('bj_defend', `img/bj/bj_guarda-removebg-preview.png`);
+        loadImage('bj_punch_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_PUNCH_ST`);
+        loadImage('bj_kick_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_KICK_ST`);
+        loadImage('bj_punch_cr', `img/bj/bj_murro-removebg-preview.png`);
+        loadImage('bj_kick_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_KICK_CR`);
+        loadImage('bj_punch_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_PUNCH_AIR`);
+        loadImage('bj_kick_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_KICK_AIR`);
+        loadImage('bj_special_anim', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_SPECIAL`);
+        loadImage('bj_hit', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_HIT`);
+        loadImage('bj_kd_fall', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_KD_FALL`);
+        loadImage('bj_kd_ground', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/ff8c00/white?text=BJ_KD_GROUND`);
 
-        // JOÃO (NOVO)
-        loadImage('joao_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_IDLE`);
-        loadImage('joao_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_WALK`);
-        // ... (copie e adapte para todos os estados do João)
-        loadImage('joao_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_JUMP`);
-        loadImage('joao_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_CROUCH`);
-        loadImage('joao_defend', `img/jao_guarda-removebg-preview.png`);
-        loadImage('joao_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_PUNCH_ST`);
-        loadImage('joao_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_KICK_ST`);
-        loadImage('joao_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_PUNCH_AIR`);
-        loadImage('joao_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_KICK_AIR`);
-        loadImage('joao_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_PUNCH_CR`);
-        loadImage('joao_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_KICK_CR`);
-        loadImage('joao_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_SPECIAL`);
-        loadImage('joao_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_HIT`);
-        loadImage('joao_kd_fall', `img/jao_pos_dano-removebg-preview.png`);
-        loadImage('joao_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_KD_GROUND`);
-loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_IDLE`);
-        loadImage('enzo_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_WALK`);
-        loadImage('enzo_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_JUMP`);
-        loadImage('enzo_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_CROUCH`);
-        loadImage('enzo_defend', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_DEFEND`);
-        loadImage('enzo_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_PUNCH_ST`);
-        loadImage('enzo_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KICK_ST`);
-        loadImage('enzo_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_PUNCH_CR`);
-        loadImage('enzo_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KICK_CR`);
-        loadImage('enzo_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_PUNCH_AIR`);
-        loadImage('enzo_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KICK_AIR`);
-        loadImage('enzo_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_SPECIAL`);
-        loadImage('enzo_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_HIT`);
-        loadImage('enzo_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KD_FALL`);
-        loadImage('enzo_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KD_GROUND`);
+        // JOÃO 
+        loadImage('joao_idle', `img/jao/jao_padrao-removebg-preview.png`);
+        loadImage('joao_walk_rf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_WALK_RF`);
+        loadImage('joao_walk_pass', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_WALK_PASS`);
+        loadImage('joao_walk_lf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_WALK_LF`);
+        loadImage('joao_jump', `img/jao/jao_piulando-removebg-preview.png`);
+        loadImage('joao_crouch', `img/jao/jao_guarda-removebg-preview.png`);
+        loadImage('joao_defend', `img/jao/jao_guarda-removebg-preview.png`);
+        loadImage('joao_punch_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_PUNCH_ST`);
+        loadImage('joao_kick_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_KICK_ST`);
+        loadImage('joao_punch_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_PUNCH_AIR`);
+        loadImage('joao_kick_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_KICK_AIR`);
+        loadImage('joao_punch_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_PUNCH_CR`);
+        loadImage('joao_kick_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_KICK_CR`);
+        loadImage('joao_special_anim', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_SPECIAL`);
+        loadImage('joao_hit', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/8a2be2/white?text=J_HIT`);
+        loadImage('joao_kd_fall', `img/jao/jao_nocaute-removebg-preview.png`);
+        loadImage('joao_kd_ground', `img/jao/jao_nocaute-removebg-preview.png`);
+
+        // ENZO (NOVO)
+        loadImage('enzo_idle', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_IDLE`);
+        loadImage('enzo_walk_rf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_WALK_RF`);
+        loadImage('enzo_walk_pass', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_WALK_PASS`);
+        loadImage('enzo_walk_lf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_WALK_LF`);
+        loadImage('enzo_jump', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_JUMP`);
+        loadImage('enzo_crouch', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_CROUCH`);
+        loadImage('enzo_defend', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_DEFEND`);
+        loadImage('enzo_punch_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_PUNCH_ST`);
+        loadImage('enzo_kick_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_KICK_ST`);
+        loadImage('enzo_punch_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_PUNCH_CR`);
+        loadImage('enzo_kick_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_KICK_CR`);
+        loadImage('enzo_punch_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_PUNCH_AIR`);
+        loadImage('enzo_kick_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_KICK_AIR`);
+        loadImage('enzo_special_anim', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_SPECIAL`);
+        loadImage('enzo_hit', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_HIT`);
+        loadImage('enzo_kd_fall', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_KD_FALL`);
+        loadImage('enzo_kd_ground', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/20c997/white?text=ENZO_KD_GROUND`);
 
         // BIEL (NOVO)
-        loadImage('biel_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_IDLE`);
-        loadImage('biel_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_WALK`);
-        loadImage('biel_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_JUMP`);
-        loadImage('biel_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_CROUCH`);
-        loadImage('biel_defend', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_DEFEND`);
-        loadImage('biel_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_PUNCH_ST`);
-        loadImage('biel_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KICK_ST`);
-        loadImage('biel_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_PUNCH_CR`);
-        loadImage('biel_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KICK_CR`);
-        loadImage('biel_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_PUNCH_AIR`);
-        loadImage('biel_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KICK_AIR`);
-        loadImage('biel_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_SPECIAL`);
-        loadImage('biel_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_HIT`);
-        loadImage('biel_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KD_FALL`);
-        loadImage('biel_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KD_GROUND`);
+        loadImage('biel_idle', `img/biel/gabriel_dias-removebg-preview.png`);
+        loadImage('biel_walk_rf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_WALK_RF`);
+        loadImage('biel_walk_pass', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_WALK_PASS`);
+        loadImage('biel_walk_lf', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_WALK_LF`);
+        loadImage('biel_jump', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_JUMP`);
+        loadImage('biel_crouch', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_CROUCH`);
+        loadImage('biel_defend', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_DEFEND`);
+        loadImage('biel_punch_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_PUNCH_ST`);
+        loadImage('biel_kick_st', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_KICK_ST`);
+        loadImage('biel_punch_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_PUNCH_CR`);
+        loadImage('biel_kick_cr', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_KICK_CR`);
+        loadImage('biel_punch_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_PUNCH_AIR`);
+        loadImage('biel_kick_air', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_KICK_AIR`);
+        loadImage('biel_special_anim', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_SPECIAL`);
+        loadImage('biel_hit', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_HIT`);
+        loadImage('biel_kd_fall', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_KD_FALL`);
+        loadImage('biel_kd_ground', `https://placehold.co/<span class="math-inline">\{SPRITE\_W\}x</span>{SPRITE_H}/adb5bd/black?text=BIEL_KD_GROUND`);
+
 
         // --- DEFINIÇÃO DOS PERSONAGENS ---
+        // Atualize CADA personagem para usar walk1, walk2, walk3
         const availableCharacters = [ 
             { 
                 id: 'vini', name: "VINI", color: '#4299e1', 
-                sprites: { idle: 'vini_idle', walk: 'vini_walk', jump: 'vini_jump', crouch: 'vini_crouch', defend: 'vini_defend', punch_st: 'vini_punch_st', kick_st: 'vini_kick_st', punch_cr: 'vini_punch_cr', kick_cr: 'vini_kick_cr', punch_air: 'vini_punch_air', kick_air: 'vini_kick_air', special_anim: 'vini_special_anim', hit: 'vini_hit', kd_fall: 'vini_kd_fall', kd_ground: 'vini_kd_ground'}
+                sprites: { idle: 'vini_idle', walk1: 'vini_walk_rf', walk2: 'vini_walk_pass', walk3: 'vini_walk_lf', jump: 'vini_jump', crouch: 'vini_crouch', defend: 'vini_defend', punch_st: 'vini_punch_st', kick_st: 'vini_kick_st', punch_cr: 'vini_punch_cr', kick_cr: 'vini_kick_cr', punch_air: 'vini_punch_air', kick_air: 'vini_kick_air', special_anim: 'vini_special_anim', hit: 'vini_hit', kd_fall: 'vini_kd_fall', kd_ground: 'vini_kd_ground'}
             }, 
             { 
                 id: 'magal', name: "MAGAL", color: '#f56565', 
-                sprites: { idle: 'magal_idle', walk: 'magal_walk', jump: 'magal_jump', crouch: 'magal_crouch', defend: 'magal_defend', punch_st: 'magal_punch_st', kick_st: 'magal_kick_st', punch_cr: 'magal_punch_cr', kick_cr: 'magal_kick_cr', punch_air: 'magal_punch_air', kick_air: 'magal_kick_air', special_anim: 'magal_special_anim', hit: 'magal_hit', kd_fall: 'magal_kd_fall', kd_ground: 'magal_kd_ground'}
+                sprites: { idle: 'magal_idle', walk1: 'magal_walk_rf', walk2: 'magal_walk_pass', walk3: 'magal_walk_lf', jump: 'magal_jump', crouch: 'magal_crouch', defend: 'magal_defend', punch_st: 'magal_punch_st', kick_st: 'magal_kick_st', punch_cr: 'magal_punch_cr', kick_cr: 'magal_kick_cr', punch_air: 'magal_punch_air', kick_air: 'magal_kick_air', special_anim: 'magal_special_anim', hit: 'magal_hit', kd_fall: 'magal_kd_fall', kd_ground: 'magal_kd_ground'}
             }, 
             { 
                 id: 'pedro', name: "PEDRO", color: '#48bb78', 
-                sprites: { idle: 'pedro_idle', walk: 'pedro_walk', jump: 'pedro_jump', crouch: 'pedro_crouch', defend: 'pedro_defend', punch_st: 'pedro_punch_st', kick_st: 'pedro_kick_st', punch_cr: 'pedro_punch_cr', kick_cr: 'pedro_kick_cr', punch_air: 'pedro_punch_air', kick_air: 'pedro_kick_air', special_anim: 'pedro_special_anim', hit: 'pedro_hit', kd_fall: 'pedro_kd_fall', kd_ground: 'pedro_kd_ground'}
+                sprites: { idle: 'pedro_idle', walk1: 'pedro_walk_rf', walk2: 'pedro_walk_pass', walk3: 'pedro_walk_lf', jump: 'pedro_jump', crouch: 'pedro_crouch', defend: 'pedro_defend', punch_st: 'pedro_punch_st', kick_st: 'pedro_kick_st', punch_cr: 'pedro_punch_cr', kick_cr: 'pedro_kick_cr', punch_air: 'pedro_punch_air', kick_air: 'pedro_kick_air', special_anim: 'pedro_special_anim', hit: 'pedro_hit', kd_fall: 'pedro_kd_fall', kd_ground: 'pedro_kd_ground'}
             },
             { 
                 id: 'markin', name: "MARKIN", color: '#06b6d4', 
-                sprites: { idle: 'markin_idle', walk: 'markin_walk', jump: 'markin_jump', crouch: 'markin_crouch', defend: 'markin_defend', punch_st: 'markin_punch_st', kick_st: 'markin_kick_st', punch_cr: 'markin_punch_cr', kick_cr: 'markin_kick_cr', punch_air: 'markin_punch_air', kick_air: 'markin_kick_air', special_anim: 'markin_special_anim', hit: 'markin_hit', kd_fall: 'markin_kd_fall', kd_ground: 'markin_kd_ground'}
+                sprites: { idle: 'markin_idle', walk1: 'markin_walk_rf', walk2: 'markin_walk_pass', walk3: 'markin_walk_lf', jump: 'markin_jump', crouch: 'markin_crouch', defend: 'markin_defend', punch_st: 'markin_punch_st', kick_st: 'markin_kick_st', punch_cr: 'markin_punch_cr', kick_cr: 'markin_kick_cr', punch_air: 'markin_punch_air', kick_air: 'markin_kick_air', special_anim: 'markin_special_anim', hit: 'markin_hit', kd_fall: 'markin_kd_fall', kd_ground: 'markin_kd_ground'}
             }, 
             { 
                 id: 'freitas', name: "FREITAS", color: '#d946ef', 
-                sprites: { idle: 'freitas_idle', walk: 'freitas_walk', jump: 'freitas_jump', crouch: 'freitas_crouch', defend: 'freitas_defend', punch_st: 'freitas_punch_st', kick_st: 'freitas_kick_st', punch_cr: 'freitas_punch_cr', kick_cr: 'freitas_kick_cr', punch_air: 'freitas_punch_air', kick_air: 'freitas_kick_air', special_anim: 'freitas_special_anim', hit: 'freitas_hit', kd_fall: 'freitas_kd_fall', kd_ground: 'freitas_kd_ground'}
+                sprites: { idle: 'freitas_idle', walk1: 'freitas_walk_rf', walk2: 'freitas_walk_pass', walk3: 'freitas_walk_lf', jump: 'freitas_jump', crouch: 'freitas_crouch', defend: 'freitas_defend', punch_st: 'freitas_punch_st', kick_st: 'freitas_kick_st', punch_cr: 'freitas_punch_cr', kick_cr: 'freitas_kick_cr', punch_air: 'freitas_punch_air', kick_air: 'freitas_kick_air', special_anim: 'freitas_special_anim', hit: 'freitas_hit', kd_fall: 'freitas_kd_fall', kd_ground: 'freitas_kd_ground'}
             },
             { 
-                id: 'bj', name: "BJ", color: '#ff8c00', // Laranja Escuro
-                sprites: { idle: 'bj_idle', walk: 'bj_walk', jump: 'bj_jump', crouch: 'bj_crouch', defend: 'bj_defend', punch_st: 'bj_punch_st', kick_st: 'bj_kick_st', punch_cr: 'bj_punch_cr', kick_cr: 'bj_kick_cr', punch_air: 'bj_punch_air', kick_air: 'bj_kick_air', special_anim: 'bj_special_anim', hit: 'bj_hit', kd_fall: 'bj_kd_fall', kd_ground: 'bj_kd_ground'}
-            },
-            // ... (entrada para JOÃO) ...
-            { 
-                id: 'joao', name: "JOÃO", color: '#8a2be2', // Violeta Azul
-                sprites: { idle: 'joao_idle', walk: 'joao_walk', jump: 'joao_jump', crouch: 'joao_crouch', defend: 'joao_defend', punch_st: 'joao_punch_st', kick_st: 'joao_kick_st', punch_cr: 'joao_punch_cr', kick_cr: 'joao_kick_cr', punch_air: 'joao_punch_air', kick_air: 'joao_kick_air', special_anim: 'joao_special_anim', hit: 'joao_hit', kd_fall: 'joao_kd_fall', kd_ground: 'joao_kd_ground'}
-            },
-            // NOVOS PERSONAGENS ABAIXO:
-            { 
-                id: 'enzo', name: "ENZO", color: '#20c997', // Verde-azulado
-                sprites: { idle: 'enzo_idle', walk: 'enzo_walk', jump: 'enzo_jump', crouch: 'enzo_crouch', defend: 'enzo_defend', punch_st: 'enzo_punch_st', kick_st: 'enzo_kick_st', punch_cr: 'enzo_punch_cr', kick_cr: 'enzo_kick_cr', punch_air: 'enzo_punch_air', kick_air: 'enzo_kick_air', special_anim: 'enzo_special_anim', hit: 'enzo_hit', kd_fall: 'enzo_kd_fall', kd_ground: 'enzo_kd_ground'}
+                id: 'bj', name: "BJ", color: '#ff8c00', 
+                sprites: { idle: 'bj_idle', walk1: 'bj_walk_rf', walk2: 'bj_walk_pass', walk3: 'bj_walk_lf', jump: 'bj_jump', crouch: 'bj_crouch', defend: 'bj_defend', punch_st: 'bj_punch_st', kick_st: 'bj_kick_st', punch_cr: 'bj_punch_cr', kick_cr: 'bj_kick_cr', punch_air: 'bj_punch_air', kick_air: 'bj_kick_air', special_anim: 'bj_special_anim', hit: 'bj_hit', kd_fall: 'bj_kd_fall', kd_ground: 'bj_kd_ground'}
             },
             { 
-                id: 'biel', name: "BIEL", color: '#adb5bd', // Cinza claro/Prata
-                sprites: { idle: 'biel_idle', walk: 'biel_walk', jump: 'biel_jump', crouch: 'biel_crouch', defend: 'biel_defend', punch_st: 'biel_punch_st', kick_st: 'biel_kick_st', punch_cr: 'biel_punch_cr', kick_cr: 'biel_kick_cr', punch_air: 'biel_punch_air', kick_air: 'biel_kick_air', special_anim: 'biel_special_anim', hit: 'biel_hit', kd_fall: 'biel_kd_fall', kd_ground: 'biel_kd_ground'}
+                id: 'joao', name: "JOÃO", color: '#8a2be2', 
+                sprites: { idle: 'joao_idle', walk1: 'joao_walk_rf', walk2: 'joao_walk_pass', walk3: 'joao_walk_lf', jump: 'joao_jump', crouch: 'joao_crouch', defend: 'joao_defend', punch_st: 'joao_punch_st', kick_st: 'joao_kick_st', punch_cr: 'joao_punch_cr', kick_cr: 'joao_kick_cr', punch_air: 'joao_punch_air', kick_air: 'joao_kick_air', special_anim: 'joao_special_anim', hit: 'joao_hit', kd_fall: 'joao_kd_fall', kd_ground: 'joao_kd_ground'}
+            },
+            { 
+                id: 'enzo', name: "ENZO", color: '#20c997', 
+                sprites: { idle: 'enzo_idle', walk1: 'enzo_walk_rf', walk2: 'enzo_walk_pass', walk3: 'enzo_walk_lf', jump: 'enzo_jump', crouch: 'enzo_crouch', defend: 'enzo_defend', punch_st: 'enzo_punch_st', kick_st: 'enzo_kick_st', punch_cr: 'enzo_punch_cr', kick_cr: 'enzo_kick_cr', punch_air: 'enzo_punch_air', kick_air: 'enzo_kick_air', special_anim: 'enzo_special_anim', hit: 'enzo_hit', kd_fall: 'enzo_kd_fall', kd_ground: 'enzo_kd_ground'}
+            },
+            { 
+                id: 'biel', name: "BIEL", color: '#adb5bd', 
+                sprites: { idle: 'biel_idle', walk1: 'biel_walk_rf', walk2: 'biel_walk_pass', walk3: 'biel_walk_lf', jump: 'biel_jump', crouch: 'biel_crouch', defend: 'biel_defend', punch_st: 'biel_punch_st', kick_st: 'biel_kick_st', punch_cr: 'biel_punch_cr', kick_cr: 'biel_kick_cr', punch_air: 'biel_punch_air', kick_air: 'biel_kick_air', special_anim: 'biel_special_anim', hit: 'biel_hit', kd_fall: 'biel_kd_fall', kd_ground: 'biel_kd_ground'}
             }
         ];
 
         // --- DEFINIÇÃO DAS ARENAS ---
         const availableArenas = [
-            { name: "Condomínio", bgPath: "img/locais/Imagem do WhatsApp de 2025-05-31 à(s) 02.37.40_bab8b7c8 (2).jpg" }, // Você precisará renomear sua imagem atual para "condominio_bg.jpg" ou ajustar aqui
-            { name: "do Pedro", bgPath: "img/locais/predo house.jpg" }, // Placeholder
-            { name: "Arena de Luta", bgPath: "img/locais/NQA CHINA.gif" }, // Placeholder
-            { name: "Rua", bgPath: "https://placehold.co/800x400/333333/white?text=Rua" } // Placeholder
+            { name: "Condomínio", bgPath: "img/locais/Imagem do WhatsApp de 2025-05-31 à(s) 02.37.40_bab8b7c8 (2).jpg" }, 
+            { name: "Casa do Pedro", bgPath: "img/locais/predo house.jpg" }, 
+            { name: "Arena de Luta", bgPath: "img/locais/NQA CHINA.gif" }, 
+            { name: "Rua", bgPath: "https://placehold.co/800x400/333333/white?text=Rua" } 
         ];
-        // Certifique-se que a imagem original do seu condomínio está em "img/condominio_bg.jpg" ou atualize o path acima.
-        // A imagem original era: "img/Imagem do WhatsApp de 2025-05-31 à(s) 02.37.40_bab8b7c8.jpg"
-        // Vou assumir que você renomeou/copiou para "img/condominio_bg.jpg"
-
+        
         const combos = [ { sequence: ['punch', 'punch', 'punch'], name: "Soco Triplo" }, { sequence: ['punch', 'punch', 'punch', 'kick', 'kick'], name: "Combo Furioso" }, { sequence: ['kick', 'kick', 'kick'], name: "Chute Triplo" }, { sequence: ['kick', 'kick', 'kick', 'punch', 'punch'], name: "Combo Demolidor" }];
         
         function updateHealthBars() { players.forEach((p, index) => { if (!p) return; const barEl = index === 0 ? player1HealthBarEl : player2HealthBarEl; const nameSpan = index === 0 ? player1HealthBarNameEl : player2HealthBarNameEl; const percent = (p.health / p.maxHealth) * 100; barEl.style.width = `${Math.max(0, percent)}%`; nameSpan.textContent = `${p.name.toUpperCase()}`; if (barEl.childNodes.length > 1 && barEl.lastChild.nodeType === Node.TEXT_NODE) { barEl.removeChild(barEl.lastChild); } barEl.appendChild(document.createTextNode(`: ${Math.max(0, Math.round(percent))}%`)); barEl.style.backgroundColor = p.color; });}
@@ -610,9 +623,9 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 opt.classList.add('arena-option');
                 opt.textContent = arena.name;
                 opt.dataset.arenaBg = arena.bgPath;
-                opt.dataset.arenaIndex = index; // Para possível seleção por teclado no futuro, não usado agora
+                opt.dataset.arenaIndex = index; 
 
-                if (arena.bgPath === selectedArenaBg) { // Marca a arena padrão como selecionada
+                if (arena.bgPath === selectedArenaBg) { 
                     opt.classList.add('selected');
                 }
 
@@ -643,10 +656,10 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
         function initializeSelections() { 
             selectedP1Char = null; selectedCpuChar = null; selectedDifficulty = null; 
             currentP1CharIndex = 0; currentCpuCharIndex = 0; 
-            selectedArenaBg = availableArenas[0].bgPath; // Define arena padrão
+            selectedArenaBg = availableArenas[0].bgPath; 
             populateCharacterOptions(p1CharOptionsContainer, 'p1', currentP1CharIndex); 
             populateCharacterOptions(cpuCharOptionsContainer, 'cpu', currentCpuCharIndex); 
-            populateArenaOptions(); // Popula opções de arena
+            populateArenaOptions(); 
             document.querySelectorAll('.difficulty-option').forEach(btn => btn.classList.remove('selected'));
         }
         
@@ -669,17 +682,19 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
             } else if (playerType === 'cpu') { 
                 if (availableCharacters[currentCpuCharIndex].id !== selectedP1Char?.id) { 
                     selectedCpuChar = { ...availableCharacters[currentCpuCharIndex] }; 
-                    switchScreen('arenaSelect'); // Vai para seleção de arena
+                    switchScreen('arenaSelect'); 
                 }
             }
         }
 
         function initializePlayerObject(playerData) {
             return { 
-                ...playerData, // Inclui id, name, color, e o objeto sprites
+                ...playerData, 
                 x: 0, y: 0, width: PLAYER_WIDTH_SCALED, height: PLAYER_HEIGHT_SCALED, health: MAX_HEALTH, maxHealth: MAX_HEALTH, velocityX: 0, velocityY: 0, isJumping: false, isCrouching: false, isAttacking: false, attackType: null, attackTimer: 0, isDefending: false, facingRight: true, hitCounter: 0, consecutiveCrouchHitsTaken: 0, knockdownState: 'none', 
                 groundedTimer: 0, comboSequence: [], lastAttackConnectTime: 0, actionCooldown: 0, 
                 punchKeyHeldInternal: false, kickKeyHeldInternal: false, specialKeyAlreadyTriggered: false, 
+                walkFrame: 0, // Para animação de caminhada
+                walkFrameTimer: 0, // Para animação de caminhada
                 specialMeter: 0, specialReady: false, performingSpecial: null, 
                 specialAnimTimer: 0, opponentSpecialMessageTimer: 0, 
                 specialState: { bottlesDrunk: 0, bottlesThrown: 0, barTableX: -MAGAL_BAR_TABLE_WIDTH, barTableY: 0, barTableTargetX: 0, barTableVisible: false, punchesDelivered: 0 } 
@@ -691,7 +706,7 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 console.error("Seleções incompletas para iniciar o jogo:", selectedP1Char, selectedCpuChar, selectedDifficulty, selectedArenaBg);
                 return;
             }
-            gameCanvas.style.backgroundImage = `url("${selectedArenaBg}")`; // Define o background da arena
+            gameCanvas.style.backgroundImage = `url("${selectedArenaBg}")`;
             setupCanvasDimensions(); 
             currentRound = 1; player1RoundWins = 0; player2RoundWins = 0;
             matchOver = false; isPaused = false; roundOverState = false;
@@ -734,6 +749,8 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                     player.knockdownState = 'none'; player.groundedTimer = 0;
                     player.comboSequence = []; player.lastAttackConnectTime = 0; player.actionCooldown = 0;
                     player.punchKeyHeldInternal = false; player.kickKeyHeldInternal = false; player.specialKeyAlreadyTriggered = false;
+                    player.walkFrame = 0; 
+                    player.walkFrameTimer = 0;
                     player.performingSpecial = null; player.specialAnimTimer = 0; player.opponentSpecialMessageTimer = 0;
                     player.specialState = { bottlesDrunk: 0, bottlesThrown: 0, barTableX: player.facingRight ? -MAGAL_BAR_TABLE_WIDTH - 50 : canvasWidth + 50, barTableY: canvasHeight - MAGAL_BAR_TABLE_HEIGHT - PLAYER_HEIGHT_SCALED + 80 , barTableTargetX: 0, barTableVisible: false, punchesDelivered: 0 };
                 }
@@ -860,7 +877,6 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 } else if (p.id === 'pedro') {
                     p.performingSpecial = 'pedro_inject'; p.specialAnimTimer = PEDRO_SPECIAL_INJECT_DURATION; p.specialState.punchesDelivered = 0;
                 }
-                // Adicionar lógicas de especial para BJ e João aqui se necessário
                 return; 
             }
             if (!wantsToSpecial && p.specialKeyAlreadyTriggered) {
@@ -919,7 +935,6 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 } else if (cpu.id === 'pedro') {
                     cpu.performingSpecial = 'pedro_inject'; cpu.specialAnimTimer = PEDRO_SPECIAL_INJECT_DURATION; cpu.specialState.punchesDelivered = 0;
                 }
-                // Adicionar lógicas de especial para BJ e João na IA se necessário
                 return;
             }
             if (target.isAttacking && absDistanceX < canAttackRange + 30 && Math.random() < defendProb) { cpu.isCrouching = true; cpu.isDefending = true; setTimeout(() => { cpu.isDefending = false; cpu.isCrouching = false; }, 300); return; }
@@ -943,7 +958,7 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
             if (player.actionCooldown > 0) { player.actionCooldown -= deltaTime; if (player.actionCooldown < 0) player.actionCooldown = 0;}
             
             const opponent = players.find(p => p !== player); 
-            if (player.id === 'vini' && player.performingSpecial) { // ... Lógica do especial do Vini ...
+            if (player.id === 'vini' && player.performingSpecial) { 
                 player.specialAnimTimer -= deltaTime;
                 switch (player.performingSpecial) {
                     case 'vini_notification': if (player.specialAnimTimer <= 0) {player.performingSpecial = 'vini_hearts'; player.specialAnimTimer = VINI_SPECIAL_HEARTS_DURATION;} break;
@@ -975,7 +990,7 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 }
                 return; 
             }
-            if (player.id === 'magal' && player.performingSpecial) { // ... Lógica do especial do Magal ...
+            if (player.id === 'magal' && player.performingSpecial) { 
                  player.specialAnimTimer -= deltaTime;
                 switch (player.performingSpecial) {
                     case 'magal_setup_bar':
@@ -1014,7 +1029,7 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 }
                 return; 
             }
-            if (player.id === 'pedro' && player.performingSpecial) { // ... Lógica do especial do Pedro ...
+            if (player.id === 'pedro' && player.performingSpecial) { 
                 player.specialAnimTimer -= deltaTime;
                 switch(player.performingSpecial) {
                     case 'pedro_inject':
@@ -1065,7 +1080,6 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 }
                 return;
             }
-            // Adicionar lógica de especial para BJ e João aqui se necessário
 
             if (player.knockdownState === 'special_hit_falling') {
                  player.velocityY += GRAVITY * 0.3; player.y += player.velocityY; player.x += player.velocityX;
@@ -1174,10 +1188,11 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
         }
 
         function drawPlayer(player) {
-            if (!player || !player.sprites) return; // Garante que player e player.sprites existem
+            if (!player || !player.sprites) return; 
 
             let playerDrawHeight = player.height; 
             let playerDrawY = player.y;
+            // currentFillStyle não é mais o principal com sprites, mas pode ser fallback
             let currentFillStyle = player.color; 
 
             if (player.isCrouching && !player.isJumping && !player.performingSpecial) { 
@@ -1185,14 +1200,17 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 playerDrawY = player.y + player.height * 0.3; 
             }
 
-            let currentSpriteKeyToUse = player.sprites.idle; // Sprite padrão
+            let currentSpriteKeyToUse = player.sprites.idle; 
 
             if (player.knockdownState === 'falling' || player.knockdownState === 'special_hit_falling') {
                 currentSpriteKeyToUse = player.sprites.kd_fall || player.sprites.hit || player.sprites.idle;
+                player.walkFrame = 0; player.walkFrameTimer = 0; 
             } else if (player.knockdownState === 'grounded' || player.knockdownState === 'special_hit_grounded') {
                 currentSpriteKeyToUse = player.sprites.kd_ground || player.sprites.hit || player.sprites.idle;
+                player.walkFrame = 0; player.walkFrameTimer = 0; 
             } else if (player.performingSpecial) {
                 currentSpriteKeyToUse = player.sprites.special_anim || player.sprites.idle;
+                player.walkFrame = 0; player.walkFrameTimer = 0; 
             } else if (player.isAttacking) {
                 if (player.attackType === 'punch') currentSpriteKeyToUse = player.sprites.punch_st;
                 else if (player.attackType === 'kick') currentSpriteKeyToUse = player.sprites.kick_st;
@@ -1201,40 +1219,51 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 else if (player.attackType === 'aerial_punch') currentSpriteKeyToUse = player.sprites.punch_air;
                 else if (player.attackType === 'aerial_kick') currentSpriteKeyToUse = player.sprites.kick_air;
                 
-                if (!currentSpriteKeyToUse) currentSpriteKeyToUse = player.sprites.idle; // Fallback de ataque
+                if (!playerSprites[currentSpriteKeyToUse]) currentSpriteKeyToUse = player.sprites.idle; 
+                player.walkFrame = 0; player.walkFrameTimer = 0; 
             } else if (player.isDefending) { 
-                currentSpriteKeyToUse = player.sprites.defend || player.sprites.crouch;
+                currentSpriteKeyToUse = player.sprites.defend || player.sprites.crouch || player.sprites.idle;
+                player.walkFrame = 0; player.walkFrameTimer = 0; 
             } else if (player.isCrouching && !player.isJumping) {
-                currentSpriteKeyToUse = player.sprites.crouch;
+                currentSpriteKeyToUse = player.sprites.crouch || player.sprites.idle;
+                player.walkFrame = 0; player.walkFrameTimer = 0; 
             } else if (player.isJumping) {
-                currentSpriteKeyToUse = player.sprites.jump;
-            } else if (player.velocityX !== 0) {
-                currentSpriteKeyToUse = player.sprites.walk;
+                currentSpriteKeyToUse = player.sprites.jump || player.sprites.idle;
+                player.walkFrame = 0; player.walkFrameTimer = 0; 
+            } else if (player.velocityX !== 0) { // Jogador está andando
+                player.walkFrameTimer++;
+                if (player.walkFrameTimer >= WALK_ANIM_FRAME_DURATION) {
+                    player.walkFrame = (player.walkFrame + 1) % 3; // Cicla entre 0, 1, 2
+                    player.walkFrameTimer = 0;
+                }
+                if (player.walkFrame === 0) currentSpriteKeyToUse = player.sprites.walk1;
+                else if (player.walkFrame === 1) currentSpriteKeyToUse = player.sprites.walk2;
+                else currentSpriteKeyToUse = player.sprites.walk3; 
+
+                if (!playerSprites[currentSpriteKeyToUse]) currentSpriteKeyToUse = player.sprites.idle; 
+            } else { // Jogador está parado (idle)
+                currentSpriteKeyToUse = player.sprites.idle;
+                player.walkFrame = 0; 
+                player.walkFrameTimer = 0;
             }
             
-            // Fallback final se a chave do sprite ainda não estiver definida ou não existir
             if (!currentSpriteKeyToUse || !playerSprites[currentSpriteKeyToUse]) {
-                 console.warn(`Sprite para estado não encontrado (${currentSpriteKeyToUse}), usando idle para ${player.id}`);
-                 currentSpriteKeyToUse = player.sprites.idle; // Tenta o idle definido para o personagem
-                 if (!playerSprites[currentSpriteKeyToUse]) { // Se nem o idle do personagem estiver carregado
-                    console.error(`Sprite IDLE CRÍTICO ${currentSpriteKeyToUse} não encontrado para ${player.id}!`);
-                    // Desenha um retângulo colorido como último recurso (já acontece se spriteToDraw for inválido)
+                 currentSpriteKeyToUse = player.sprites.idle; 
+                 if (!playerSprites[currentSpriteKeyToUse]) { 
+                    console.error(`CRÍTICO: Sprite IDLE ${currentSpriteKeyToUse} para o jogador ${player.id} não foi carregado!`);
                  }
             }
             
             const spriteToDraw = playerSprites[currentSpriteKeyToUse];
 
-            // Desenha o sprite base do personagem
             if (spriteToDraw && spriteToDraw.complete && spriteToDraw.naturalHeight !== 0) {
-                // Exceção para Pedro_pump/rush/combo (mantém o retângulo verde por enquanto)
                 let useDefaultRect = (player.id === 'pedro' && 
                                      (player.performingSpecial === 'pedro_pump' || 
                                       player.performingSpecial === 'pedro_rush' || 
                                       player.performingSpecial === 'pedro_punch_combo'));
                 
                 if (useDefaultRect) {
-                     // A lógica de mudança de cor/efeitos do Pedro já está abaixo,
-                     // aqui apenas garantimos que não tentaremos desenhar um sprite que não temos.
+                    // Mantém o desenho do retângulo para Pedro em certos especiais (abaixo)
                 } else {
                     ctx.save();
                     if (!player.facingRight) {
@@ -1247,19 +1276,17 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                     ctx.restore();
                 }
             } else { 
-                // Se o sprite não estiver pronto ou não existir, desenha o retângulo colorido
-                ctx.fillStyle = currentFillStyle; 
+                ctx.fillStyle = player.color; // Fallback para cor se sprite falhar
                 ctx.fillRect(player.x, playerDrawY, player.width, playerDrawHeight);
             }
 
-            // Lógica de DESENHO ADICIONAL para especiais (mantida como estava, pode precisar de ajuste)
+            // Lógica de DESENHO ADICIONAL para especiais 
             if (player.id === 'vini' && player.performingSpecial) {
                 switch (player.performingSpecial) {
                     case 'vini_notification': ctx.fillStyle = 'yellow'; ctx.fillRect(player.x + player.width / 2 - 5, player.y - 20, 10, 10); break;
                     case 'vini_hearts': ctx.fillStyle = 'pink'; for(let i=0; i<3; i++) { ctx.beginPath(); ctx.moveTo(player.x + player.width/2 + (i*15-15) , player.y - 20 - (i%2 * 5)); ctx.bezierCurveTo(player.x + player.width/2 + (i*15-15) +5, player.y - 30 - (i%2 * 5), player.x + player.width/2 + (i*15-15) +10, player.y -15 - (i%2 * 5), player.x + player.width/2 + (i*15-15), player.y -10- (i%2 * 5) ); ctx.bezierCurveTo(player.x + player.width/2 + (i*15-15) -10, player.y -15- (i%2 * 5), player.x + player.width/2 + (i*15-15) -5, player.y -30- (i%2 * 5), player.x + player.width/2 + (i*15-15), player.y -20- (i%2 * 5)); ctx.fill(); } break;
                     case 'vini_message': drawTextBox(player.x + player.width/2, player.y, "namorada: a gente tem que terminar, eu gosto de outro", 120, 12); break; 
                     case 'vini_rage': case 'vini_charge': case 'vini_rush':
-                        // currentFillStyle = '#cc0000'; // A cor do sprite já deve refletir isso, ou pode ser um overlay
                         ctx.fillStyle = '#ddcc00'; 
                         const hornWidth = 10; const hornHeight = 20; 
                         const headX = player.x + player.width/2; 
@@ -1283,47 +1310,38 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                         const drinkCycle = Math.floor((MAGAL_SPECIAL_DRINK_DURATION_PER_BOTTLE - player.specialAnimTimer) / (MAGAL_SPECIAL_DRINK_DURATION_PER_BOTTLE / 2));
                         if (drinkCycle % 2 === 0) { ctx.fillRect(player.facingRight ? player.x + player.width - 3 : player.x - 3 , player.y + player.height/2 - 7, 6, 14); } 
                         break;
-                    case 'magal_disco_dance': // O sprite 'magal_special_anim' deve ser usado, a cor é aplicada sobre ele
+                    case 'magal_disco_dance': 
                         const danceColorIndex = Math.floor(Date.now() / 150) % 4; 
                         const danceColors = [player.color, 'lime', 'fuchsia', 'aqua'];
-                        // Aplicar um overlay de cor ou efeito se o sprite base não mudar de cor
-                        // ctx.fillStyle = danceColors[danceColorIndex]; 
-                        // ctx.fillRect(player.x, playerDrawY, player.width, playerDrawHeight); // Exemplo de overlay
                         break;
                     case 'magal_final_message': drawTextBox(player.x + player.width/2, player.y, "nunca mais eu vou beber, EU JURO!", 180, 12); break; 
                 }
             }
             if (player.id === 'pedro' && player.performingSpecial) {
-                 // A lógica de desenhar o retângulo verde do Pedro será mantida aqui
-                 // Se você tiver sprites específicos para esses estados, a lógica de seleção de currentSpriteKeyToUse os pegaria.
-                 // Esta parte abaixo desenha EFEITOS por cima ou em vez do sprite.
-                let pedroFillStyle = player.color; // Cor base do Pedro
+                let pedroFillStyle = player.color; 
                 if (player.performingSpecial === 'pedro_inject') {
-                    pedroFillStyle = 'rgba(0, 255, 0, 0.5)'; // Verde semi-transparente
+                    pedroFillStyle = 'rgba(0, 255, 0, 0.5)'; 
                     ctx.fillStyle = pedroFillStyle; 
                     ctx.fillRect(player.x, playerDrawY, player.width, playerDrawHeight);
                     ctx.fillStyle = 'grey'; ctx.fillRect(player.x + player.width/2 - 1, playerDrawY + playerDrawHeight/2 - 10, 2, 7); 
                     ctx.fillStyle = 'silver'; ctx.fillRect(player.x + player.width/2 - 0.5, playerDrawY + playerDrawHeight/2 - 13, 1, 3);
                 } else if (player.performingSpecial === 'pedro_pump') {
-                    pedroFillStyle = '#004d00'; // Verde escuro sólido
+                    pedroFillStyle = '#004d00'; 
                     ctx.fillStyle = pedroFillStyle;
-                    ctx.fillRect(player.x, playerDrawY, player.width, playerDrawHeight); // Desenha o corpo do Pedro
+                    ctx.fillRect(player.x, playerDrawY, player.width, playerDrawHeight); 
                     ctx.fillStyle = 'silver';
                     ctx.fillRect(player.x - 7, playerDrawY + playerDrawHeight/3 - 3, player.width + 14, 6); 
-                    const pumpCycle = Math.sin( (PEDRO_SPECIAL_PUMP_DURATION - player.specialAnimTimer) / (PEDRO_SPECIAL_PUMP_DURATION / (Math.PI * 4)) ); 
-                    // playerDrawY += pumpCycle * 3; // Este Y afeta o sprite, não o efeito overlay se houver sprite
                 } else if (player.performingSpecial === 'pedro_rush' || player.performingSpecial === 'pedro_punch_combo') {
-                    pedroFillStyle = '#006400'; // Verde mais escuro
+                    pedroFillStyle = '#006400'; 
                     ctx.fillStyle = pedroFillStyle;
-                    ctx.fillRect(player.x, playerDrawY, player.width, playerDrawHeight); // Desenha o corpo do Pedro
+                    ctx.fillRect(player.x, playerDrawY, player.width, playerDrawHeight); 
                 }
             }
 
             if (player.knockdownState === 'special_hit_grounded' && player.opponentSpecialMessageTimer > 0) { drawTextBox(player.x + player.width/2, player.y, "se acalma disgraça, quem mandou ser corno", 180, 12, 'rgba(50,50,50,0.8)', '#ffdddd');}
             
-            // Desenha a hitbox de ataque (se estiver atacando)
             if (player.isAttacking && player.knockdownState === 'none' && !player.performingSpecial) {
-                ctx.fillStyle = 'rgba(255, 255, 0, 0.3)'; // Mais transparente para não cobrir o sprite
+                ctx.fillStyle = 'rgba(255, 255, 0, 0.3)'; 
                 let attackHitboxYOffset = playerDrawHeight/4; let attackHitboxHeight = playerDrawHeight/2;
                 if (player.attackType.startsWith('crouch_')) { attackHitboxYOffset = playerDrawHeight*0.5; attackHitboxHeight = playerDrawHeight*0.4;}
                 else if (player.attackType.startsWith('aerial_')) { attackHitboxYOffset = playerDrawHeight/3; }
@@ -1345,7 +1363,6 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
                 if (roundOverTimer <= 0) {
                     currentRound++;
                     if (currentRound > MAX_ROUNDS || player1RoundWins >= Math.ceil(MAX_ROUNDS/2) || player2RoundWins >= Math.ceil(MAX_ROUNDS/2) ) {
-                        // Match over logic handled by handleRoundEnd
                     } else {
                         startNewRound();
                     }
@@ -1373,7 +1390,7 @@ loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/whit
         window.onload = () => {
             setupCanvasDimensions(); 
             window.addEventListener('resize', setupCanvasDimensions); 
-            initializeSelections(); // Garante que arenas são populadas
+            initializeSelections(); 
             switchScreen('modeSelect');
         };
 
