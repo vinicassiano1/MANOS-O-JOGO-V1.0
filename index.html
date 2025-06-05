@@ -217,8 +217,8 @@
 
             const scaleFactor = canvas.width / BASE_CANVAS_WIDTH;
             
-            const basePlayerWidth = 75; 
-            const basePlayerHeight = 112.5; 
+            const basePlayerWidth = 150; 
+            const basePlayerHeight = 225; 
 
             PLAYER_WIDTH_SCALED = basePlayerWidth * scaleFactor; 
             PLAYER_HEIGHT_SCALED = basePlayerHeight * scaleFactor;
@@ -459,7 +459,38 @@
         loadImage('joao_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_HIT`);
         loadImage('joao_kd_fall', `img/jao_pos_dano-removebg-preview.png`);
         loadImage('joao_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_KD_GROUND`);
+loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_IDLE`);
+        loadImage('enzo_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_WALK`);
+        loadImage('enzo_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_JUMP`);
+        loadImage('enzo_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_CROUCH`);
+        loadImage('enzo_defend', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_DEFEND`);
+        loadImage('enzo_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_PUNCH_ST`);
+        loadImage('enzo_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KICK_ST`);
+        loadImage('enzo_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_PUNCH_CR`);
+        loadImage('enzo_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KICK_CR`);
+        loadImage('enzo_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_PUNCH_AIR`);
+        loadImage('enzo_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KICK_AIR`);
+        loadImage('enzo_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_SPECIAL`);
+        loadImage('enzo_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_HIT`);
+        loadImage('enzo_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KD_FALL`);
+        loadImage('enzo_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KD_GROUND`);
 
+        // BIEL (NOVO)
+        loadImage('biel_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_IDLE`);
+        loadImage('biel_walk', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_WALK`);
+        loadImage('biel_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_JUMP`);
+        loadImage('biel_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_CROUCH`);
+        loadImage('biel_defend', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_DEFEND`);
+        loadImage('biel_punch_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_PUNCH_ST`);
+        loadImage('biel_kick_st', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KICK_ST`);
+        loadImage('biel_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_PUNCH_CR`);
+        loadImage('biel_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KICK_CR`);
+        loadImage('biel_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_PUNCH_AIR`);
+        loadImage('biel_kick_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KICK_AIR`);
+        loadImage('biel_special_anim', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_SPECIAL`);
+        loadImage('biel_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_HIT`);
+        loadImage('biel_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KD_FALL`);
+        loadImage('biel_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_KD_GROUND`);
 
         // --- DEFINIÇÃO DOS PERSONAGENS ---
         const availableCharacters = [ 
@@ -487,9 +518,19 @@
                 id: 'bj', name: "BJ", color: '#ff8c00', // Laranja Escuro
                 sprites: { idle: 'bj_idle', walk: 'bj_walk', jump: 'bj_jump', crouch: 'bj_crouch', defend: 'bj_defend', punch_st: 'bj_punch_st', kick_st: 'bj_kick_st', punch_cr: 'bj_punch_cr', kick_cr: 'bj_kick_cr', punch_air: 'bj_punch_air', kick_air: 'bj_kick_air', special_anim: 'bj_special_anim', hit: 'bj_hit', kd_fall: 'bj_kd_fall', kd_ground: 'bj_kd_ground'}
             },
+            // ... (entrada para JOÃO) ...
             { 
                 id: 'joao', name: "JOÃO", color: '#8a2be2', // Violeta Azul
                 sprites: { idle: 'joao_idle', walk: 'joao_walk', jump: 'joao_jump', crouch: 'joao_crouch', defend: 'joao_defend', punch_st: 'joao_punch_st', kick_st: 'joao_kick_st', punch_cr: 'joao_punch_cr', kick_cr: 'joao_kick_cr', punch_air: 'joao_punch_air', kick_air: 'joao_kick_air', special_anim: 'joao_special_anim', hit: 'joao_hit', kd_fall: 'joao_kd_fall', kd_ground: 'joao_kd_ground'}
+            },
+            // NOVOS PERSONAGENS ABAIXO:
+            { 
+                id: 'enzo', name: "ENZO", color: '#20c997', // Verde-azulado
+                sprites: { idle: 'enzo_idle', walk: 'enzo_walk', jump: 'enzo_jump', crouch: 'enzo_crouch', defend: 'enzo_defend', punch_st: 'enzo_punch_st', kick_st: 'enzo_kick_st', punch_cr: 'enzo_punch_cr', kick_cr: 'enzo_kick_cr', punch_air: 'enzo_punch_air', kick_air: 'enzo_kick_air', special_anim: 'enzo_special_anim', hit: 'enzo_hit', kd_fall: 'enzo_kd_fall', kd_ground: 'enzo_kd_ground'}
+            },
+            { 
+                id: 'biel', name: "BIEL", color: '#adb5bd', // Cinza claro/Prata
+                sprites: { idle: 'biel_idle', walk: 'biel_walk', jump: 'biel_jump', crouch: 'biel_crouch', defend: 'biel_defend', punch_st: 'biel_punch_st', kick_st: 'biel_kick_st', punch_cr: 'biel_punch_cr', kick_cr: 'biel_kick_cr', punch_air: 'biel_punch_air', kick_air: 'biel_kick_air', special_anim: 'biel_special_anim', hit: 'biel_hit', kd_fall: 'biel_kd_fall', kd_ground: 'biel_kd_ground'}
             }
         ];
 
