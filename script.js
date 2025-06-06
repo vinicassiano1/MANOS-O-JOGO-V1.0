@@ -303,9 +303,9 @@ loadImage('chinela_flying1', `https://placehold.co/50x20/aa4400/white?text=CHIN1
 loadImage('chinela_flying2', `https://placehold.co/50x20/aa4400/white?text=CHIN2`);
 // JOÃO
 loadImage('joao_idle', `img/jao/jao_padrao-removebg-preview.png`);
-loadImage('joao_walk_rf', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_WALK_RF`);
-loadImage('joao_walk_pass', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_WALK_PASS`);
-loadImage('joao_walk_lf', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white?text=J_WALK_LF`);
+loadImage('joao_walk_rf', `img/jao/jaoandando_3-removebg-preview.png`);
+loadImage('joao_walk_pass', `img/jao/jaoandando_1-removebg-preview.png`);
+loadImage('joao_walk_lf', `img/jao/jaoandando_2-removebg-preview.png`);
 loadImage('joao_jump', `img/jao/jao_piulando-removebg-preview.png`);
 loadImage('joao_crouch', `img/jao/jao_guarda-removebg-preview.png`);
 loadImage('joao_defend', `img/jao/jao_guarda-removebg-preview.png`);
