@@ -263,8 +263,8 @@ loadImage('pedro_punch_air', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb7
 loadImage('pedro_kick_air', `img/pedro/vuadora predo.png`);
 loadImage('pedro_punch_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_PUNCH_CR`);
 loadImage('pedro_kick_cr', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_KICK_CR`);
-loadImage('pedro_special_supine', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_SP_SUPINE`);
-loadImage('pedro_special_power_up', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_SP_POWER`);
+loadImage('pedro_special_supine', `img/pedro/ezgif.com-animated-gif-maker.gif`);
+loadImage('pedro_special_power_up', `img/pedro/pedro_fortao-removebg-preview.png`);
 loadImage('pedro_special_attack1', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_SP_ATK1`);
 loadImage('pedro_special_attack2', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_SP_ATK2`);
 loadImage('pedro_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/48bb78/white?text=P_HIT`);
