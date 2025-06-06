@@ -289,7 +289,7 @@ loadImage('markin_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/whi
 loadImage('markin_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_KD_FALL`);
 loadImage('markin_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/06b6d4/white?text=MK_KD_GROUND`);
 // FREITAS
-loadImage('freitas_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_IDLE`);
+loadImage('freitas_idle', `img/freitas/freitas_parado-removebg-preview (1).png`);
 loadImage('freitas_walk_rf', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_WALK_RF`);
 loadImage('freitas_walk_pass', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_WALK_PASS`);
 loadImage('freitas_walk_lf', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/d946ef/white?text=F_WALK_LF`);
@@ -353,7 +353,7 @@ loadImage('joao_hit', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/8a2be2/white
 loadImage('joao_kd_fall', `img/jao/jao_nocaute-removebg-preview.png`);
 loadImage('joao_kd_ground', `img/jao/jao_nocaute-removebg-preview.png`);
 // ENZO
-loadImage('enzo_idle', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_IDLE`);
+loadImage('enzo_idle', `img/enzo/enzo_parado-removebg-preview.png`);
 loadImage('enzo_walk_rf', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_WALK_RF`);
 loadImage('enzo_walk_pass', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_WALK_PASS`);
 loadImage('enzo_walk_lf', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_WALK_LF`);
