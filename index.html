@@ -8,10 +8,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="introContainer">
+        <video id="introVideo" src="img/abertura.mp4" autoplay muted playsinline></video>
+        <button id="skipIntroButton" class="button">Pular Abertura</button>
+    </div>
+
     <h1>MANOS FIGHT</h1>
 
-    <div id="modeSelectScreen" class="screen active">
-        <h2>Escolha o Modo de Jogo</h2>
+    <div id="modeSelectScreen" class="screen"> <h2>Escolha o Modo de Jogo</h2>
         <div class="options-grid">
              <button class="button" id="campaignButton">Modo Campanha</button>
              <button class="button" id="pvcpuButton">Jogador vs CPU</button>
@@ -129,6 +133,9 @@
         </div>
         <button id="touchPauseBtn" class="touch-button">❚❚</button>
     </div>
+
+    <audio id="menuMusic" src="img/musica 8bit manosw.mp3" loop></audio>
+    <audio id="fightMusic" src="musica_luta.mp3" loop></audio>
 
     <script src="script.js"></script>
 </body>

@@ -7,6 +7,14 @@ const BASE_CANVAS_HEIGHT = 400;
 let canvasWidth, canvasHeight;
 let PLAYER_WIDTH_SCALED, PLAYER_HEIGHT_SCALED, PLAYER_SPEED_SCALED, JUMP_FORCE_SCALED, ATTACK_RANGE_SCALED;
 
+// NOVO: Referências aos novos elementos de mídia
+const introContainer = document.getElementById('introContainer');
+const introVideo = document.getElementById('introVideo');
+const skipIntroButton = document.getElementById('skipIntroButton');
+const menuMusic = document.getElementById('menuMusic');
+const fightMusic = document.getElementById('fightMusic');
+
+
 function setupCanvasDimensions() {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
@@ -39,6 +47,7 @@ function setupCanvasDimensions() {
 }
 
 const screens = {
+    modeSelect: document.getElementById('modeSelectScreen'),
     modeSelect: document.getElementById('modeSelectScreen'),
     controlSelect: document.getElementById('controlSelectScreen'),
     p1CharSelect: document.getElementById('p1CharSelectScreen'),
@@ -145,6 +154,26 @@ let isPaused = false;
 let roundOverState = false;
 let roundOverTimer = 0;
 let projectiles = [];
+
+function goToMainMenu() {
+    // Para o vídeo
+    introVideo.pause();
+    introVideo.currentTime = 0;
+    
+    // Esconde o container da abertura
+    introContainer.style.display = 'none';
+    
+    // Toca a música do menu (navegadores exigem interação do usuário para tocar som)
+    menuMusic.play().catch(e => console.error("Erro ao tocar música do menu:", e));
+
+    // Mostra a tela de seleção de modo
+    switchScreen('modeSelect');
+}
+
+introVideo.addEventListener('ended', goToMainMenu);
+
+// NOVO: Evento para o botão de pular
+skipIntroButton.addEventListener('click', goToMainMenu);
 
 // NOVO: Variáveis para o Modo Campanha
 let campaignOpponents = [];
@@ -343,9 +372,9 @@ loadImage('enzo_kd_fall', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/w
 loadImage('enzo_kd_ground', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/20c997/white?text=ENZO_KD_GROUND`);
 // BIEL
 loadImage('biel_idle', `img/biel/gabriel_dias-removebg-preview.png`);
-loadImage('biel_walk_rf', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_WALK_RF`);
-loadImage('biel_walk_pass', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_WALK_PASS`);
-loadImage('biel_walk_lf', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_WALK_LF`);
+loadImage('biel_walk_rf', `img/biel/bielandando_4-removebg-preview (1).png`);
+loadImage('biel_walk_pass', `img/biel/bielandando_2-removebg-preview.png`);
+loadImage('biel_walk_lf', `img/biel/biel_andando_1-removebg-preview.png`);
 loadImage('biel_jump', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_JUMP`);
 loadImage('biel_crouch', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_CROUCH`);
 loadImage('biel_defend', `https://placehold.co/${SPRITE_W}x${SPRITE_H}/adb5bd/black?text=BIEL_DEFEND`);
@@ -632,6 +661,12 @@ function startGame() {
         opponentLabel = gameMode === 'pvp' ? 'J2' : 'CPU';
     }
 
+   menuMusic.pause();
+    menuMusic.currentTime = 0;
+    fightMusic.currentTime = 0;
+    fightMusic.play().catch(e => console.error("Erro ao tocar música de luta:", e));
+
+
     gameCanvas.style.backgroundImage = `url("${selectedArenaBg}")`;
     setupCanvasDimensions();
     currentRound = 1; player1RoundWins = 0; player2RoundWins = 0;
@@ -777,6 +812,9 @@ window.addEventListener("gamepaddisconnected", handleGamepadDisconnected);
 
 // NOVO: Função para resetar tudo e voltar ao menu
 function resetToMenu() {
+ fightMusic.pause();
+    fightMusic.currentTime = 0;
+    menuMusic.play().catch(e => console.error("Erro ao tocar música do menu:", e));
     gameOverModal.style.display = 'none';
     matchOver = false;
     gameMode = 'pvcpu'; // reseta para o padrão
