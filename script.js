@@ -7,7 +7,7 @@ const BASE_CANVAS_HEIGHT = 400;
 let canvasWidth, canvasHeight;
 let PLAYER_WIDTH_SCALED, PLAYER_HEIGHT_SCALED, PLAYER_SPEED_SCALED, JUMP_FORCE_SCALED, ATTACK_RANGE_SCALED;
 
-// NOVO: Referências aos novos elementos de mídia
+// Referências aos novos elementos de mídia
 const introContainer = document.getElementById('introContainer');
 const introVideo = document.getElementById('introVideo');
 const skipIntroButton = document.getElementById('skipIntroButton');
@@ -48,7 +48,6 @@ function setupCanvasDimensions() {
 
 const screens = {
     modeSelect: document.getElementById('modeSelectScreen'),
-    modeSelect: document.getElementById('modeSelectScreen'),
     controlSelect: document.getElementById('controlSelectScreen'),
     p1CharSelect: document.getElementById('p1CharSelectScreen'),
     p2CharSelect: document.getElementById('p2CharSelectScreen'),
@@ -81,7 +80,7 @@ const touchDownBtn = document.getElementById('touchDownBtn');
 const touchLeftBtn = document.getElementById('touchLeftBtn');
 const touchRightBtn = document.getElementById('touchRightBtn');
 const touchPunchBtn = document.getElementById('touchPunchBtn');
-const touchKickBtn = document.getElementById('touchKickBtn');
+const touchKickBtn = document = document.getElementById('touchKickBtn');
 const touchSpecialBtn = document.getElementById('touchSpecialBtn');
 const touchPauseBtn = document.getElementById('touchPauseBtn');
 
@@ -159,10 +158,10 @@ function goToMainMenu() {
     // Para o vídeo
     introVideo.pause();
     introVideo.currentTime = 0;
-    
+
     // Esconde o container da abertura
     introContainer.style.display = 'none';
-    
+
     // Toca a música do menu (navegadores exigem interação do usuário para tocar som)
     menuMusic.play().catch(e => console.error("Erro ao tocar música do menu:", e));
 
@@ -172,10 +171,10 @@ function goToMainMenu() {
 
 introVideo.addEventListener('ended', goToMainMenu);
 
-// NOVO: Evento para o botão de pular
+// Evento para o botão de pular
 skipIntroButton.addEventListener('click', goToMainMenu);
 
-// NOVO: Variáveis para o Modo Campanha
+// Variáveis para o Modo Campanha
 let campaignOpponents = [];
 let campaignStage = 0;
 const CAMPAIGN_DIFFICULTIES = ['easy', 'easy', 'medium', 'medium', 'hard', 'hard'];
@@ -190,8 +189,10 @@ let allImagesProcessedCheck = false;
 function checkAllImagesProcessed() {
     if (!allImagesProcessedCheck && imagesLoadedCount >= imagesToLoadCount) {
         allImagesProcessedCheck = true;
-        if (currentScreen === 'game' && !lastTime && !matchOver && !isPaused && !roundOverState) {
-            lastTime = 0;
+        // Remova a verificação de !lastTime aqui, pois ela pode impedir que o gameLoop comece novamente
+        // after a game over. lastTime will be reset in startNewRound or resetToMenu
+        if (currentScreen === 'game' && !matchOver && !isPaused && !roundOverState) {
+            lastTime = performance.now(); // Initialize lastTime correctly for the first frame
             requestAnimationFrame(gameLoop);
         }
     }
@@ -399,7 +400,7 @@ const combos = [ { sequence: ['punch', 'punch', 'punch'], name: "Soco Triplo" },
 function updateHealthBars() { players.forEach((p, index) => { if (!p) return; const barEl = index === 0 ? player1HealthBarEl : player2HealthBarEl; const nameSpan = index === 0 ? player1HealthBarNameEl : player2HealthBarNameEl; const percent = (p.health / p.maxHealth) * 100; barEl.style.width = `${Math.max(0, percent)}%`; nameSpan.textContent = `${p.name.toUpperCase()}`; if (barEl.childNodes.length > 1 && barEl.lastChild.nodeType === Node.TEXT_NODE) { barEl.removeChild(barEl.lastChild); } barEl.appendChild(document.createTextNode(`: ${Math.max(0, Math.round(percent))}%`)); barEl.style.backgroundColor = p.color; });}
 function updateSpecialBars() { players.forEach((p, index) => { if (!p) return; const barEl = index === 0 ? player1SpecialBarEl : player2SpecialBarEl; const percent = (p.specialMeter / SPECIAL_METER_MAX) * 100; barEl.style.width = `${Math.max(0, percent)}%`; barEl.textContent = `J${index+1} Esp: ${Math.floor(percent)}%`; if (p.specialReady) barEl.classList.add('ready'); else barEl.classList.remove('ready'); });}
 function updateScoreDisplay() { player1ScoreEl.textContent = player1RoundWins; player2ScoreEl.textContent = player2RoundWins;
-    // ALTERADO: Mostra o estágio da campanha se aplicável
+    // Mostra o estágio da campanha se aplicável
     if (gameMode === 'campaign') {
         currentRoundDisplayEl.textContent = `LUTA ${campaignStage + 1} / ${CAMPAIGN_NUM_FIGHTS}`;
     } else {
@@ -420,7 +421,7 @@ function switchScreen(screenName) {
         touchControlsContainer.style.display = 'none';
     } else {
         const showTouch = (gameMode === 'pvcpu' && Object.keys(activeGamepads).length === 0) ||
-                           (gameMode === 'campaign' && Object.keys(activeGamepads).length === 0) || // NOVO
+                           (gameMode === 'campaign' && Object.keys(activeGamepads).length === 0) ||
                            (gameMode === 'pvp' && pvpControlScheme === 'touch-vs-gamepad');
         touchControlsContainer.style.display = showTouch ? 'block' : 'none';
     }
@@ -439,7 +440,7 @@ function populateCharacterOptions(container, playerNumber, currentIndex) {
         opt.dataset.charIndex = index;
 
         let isUnavailable = false;
-        // ALTERADO: Lógica de indisponibilidade para campanha e pvp
+        // Lógica de indisponibilidade para campanha e pvp
         if (playerNumber === 2 && gameMode !== 'campaign' && selectedP1Char && selectedP1Char.id === char.id) {
             isUnavailable = true;
         }
@@ -485,7 +486,7 @@ function populateArenaOptions() {
             document.querySelectorAll('.arena-option').forEach(btn => btn.classList.remove('selected'));
             opt.classList.add('selected');
             selectedArenaBg = opt.dataset.arenaBg;
-            // ALTERADO: A arena não inicia mais o jogo diretamente
+            // A arena não inicia mais o jogo diretamente
             if (gameMode === 'pvcpu') {
                 switchScreen('difficultySelect');
             } else { // Para PvP, a seleção de arena é a última etapa
@@ -509,7 +510,7 @@ function initializeSelections() {
 }
 
 // --- Event Listeners para Seleção de Modo ---
-// NOVO: Botão Modo Campanha
+// Botão Modo Campanha
 document.getElementById('campaignButton').addEventListener('click', () => {
     gameMode = 'campaign';
     initializeSelections();
@@ -556,13 +557,13 @@ document.getElementById('gamepadVsGamepadButton').addEventListener('click', () =
 
 document.querySelectorAll('.difficulty-option').forEach(button => { button.addEventListener('click', () => { document.querySelectorAll('.difficulty-option').forEach(btn => btn.classList.remove('selected')); button.classList.add('selected'); selectedDifficulty = button.dataset.difficulty; startGame(); });});
 
-// ALTERADO: confirmação de personagem agora lida com o modo campanha
+// confirmação de personagem agora lida com o modo campanha
 function confirmCharacter(playerNumber) {
     if (playerNumber === 1) {
         selectedP1Char = { ...availableCharacters[currentP1CharIndex] };
-        
+
         if (gameMode === 'campaign') {
-            startCampaign(); // NOVO: Inicia a campanha
+            startCampaign(); // Inicia a campanha
         } else { // Lógica para outros modos
             populateCharacterOptions(p2CharOptionsContainer, 2, currentP2CharIndex);
             switchScreen('p2CharSelect');
@@ -576,7 +577,7 @@ function confirmCharacter(playerNumber) {
 }
 
 
-// --- NOVO: Funções do Modo Campanha ---
+// --- Funções do Modo Campanha ---
 
 function generateCampaignRoster() {
     // Filtra para não incluir o personagem do jogador
@@ -616,7 +617,7 @@ function startCampaignFight() {
 
     // Mostra mensagem de início da luta
     messageArea.textContent = `Luta ${campaignStage + 1}: ${selectedP2Char.name.toUpperCase()}`;
-    
+
     // Inicia a luta
     setTimeout(startGame, 2000); // Um pequeno delay para o jogador ler a mensagem
 }
@@ -643,7 +644,7 @@ function initializePlayerObject(playerData) {
     };
 }
 
-// ALTERADO: Lógica de início de jogo
+// Lógica de início de jogo
 function startGame() {
     let opponentName;
     let opponentLabel;
@@ -661,7 +662,7 @@ function startGame() {
         opponentLabel = gameMode === 'pvp' ? 'J2' : 'CPU';
     }
 
-   menuMusic.pause();
+    menuMusic.pause();
     menuMusic.currentTime = 0;
     fightMusic.currentTime = 0;
     fightMusic.play().catch(e => console.error("Erro ao tocar música de luta:", e));
@@ -669,8 +670,19 @@ function startGame() {
 
     gameCanvas.style.backgroundImage = `url("${selectedArenaBg}")`;
     setupCanvasDimensions();
-    currentRound = 1; player1RoundWins = 0; player2RoundWins = 0;
-    matchOver = false; isPaused = false; roundOverState = false;
+    // Resetar o estado global da partida no início de CADA NOVA PARTIDA
+    currentRound = 1;
+    player1RoundWins = 0;
+    player2RoundWins = 0;
+    matchOver = false;
+    isPaused = false;
+    roundOverState = false;
+    projectiles = []; // Limpa projéteis de uma partida anterior
+    screenShakeActive = false;
+    currentScreenShakeIntensity = 0;
+    currentScreenShakeDuration = 0;
+    aiActionCooldown = 0; // Resetar o cooldown da AI também
+    lastTime = 0; // Reiniciar o lastTime para o gameLoop funcionar corretamente
 
     players[0] = initializePlayerObject(selectedP1Char);
     players[1] = initializePlayerObject(selectedP2Char);
@@ -687,23 +699,25 @@ function startGame() {
 
 function startNewRound() {
     roundOverState = false; messageArea.textContent = '';
-    projectiles = [];
+    projectiles = []; // Limpa projéteis no início de cada round
 
-    // ALTERADO: Mensagem de início de round
+    // Mensagem de início de round
     if (gameMode === 'campaign') {
         roundStartMessageEl.textContent = `LUTA ${campaignStage + 1} - ROUND ${currentRound}`;
     } else {
         roundStartMessageEl.textContent = `Round ${currentRound}`;
     }
-    
+
     roundStartMessageEl.style.display = 'block';
     resetRoundState(); updateScoreDisplay();
     setTimeout(() => {
         roundStartMessageEl.style.display = 'none';
         if (allImagesProcessedCheck && !matchOver) {
-            if(!lastTime && !isPaused) {
-                 lastTime = performance.now() - 16.66;
-                 requestAnimationFrame(gameLoop);
+            // Garante que o gameLoop é iniciado/continuado apenas se não estiver rodando
+            // e se não houver um lastTime definido ou se for 0.
+            if(!lastTime || lastTime === 0 || isPaused) { // Adicionei isPaused aqui caso o jogo tenha pausado antes do round acabar
+                lastTime = performance.now(); // Define o lastTime corretamente para o primeiro frame
+                requestAnimationFrame(gameLoop);
             }
         }
     }, 2000);
@@ -722,6 +736,8 @@ function resetRoundState() {
             player.punchKeyHeldInternal = false; player.kickKeyHeldInternal = false; player.specialKeyAlreadyTriggered = false; player.pauseKeyHeldInternal = false;
             player.walkFrame = 0;
             player.walkFrameTimer = 0;
+            player.specialMeter = 0; // Reiniciar o medidor de especial a cada round
+            player.specialReady = false; // Reiniciar o estado de especial
             player.performingSpecial = null; player.specialAnimTimer = 0; player.opponentSpecialMessageTimer = 0;
             player.specialState = {
                 bottlesDrunk: 0, bottlesThrown: 0,
@@ -810,23 +826,45 @@ function handleGamepadDisconnected(e) {
 window.addEventListener("gamepadconnected", handleGamepadConnected);
 window.addEventListener("gamepaddisconnected", handleGamepadDisconnected);
 
-// NOVO: Função para resetar tudo e voltar ao menu
+// Função para resetar tudo e voltar ao menu
 function resetToMenu() {
- fightMusic.pause();
+    fightMusic.pause();
     fightMusic.currentTime = 0;
     menuMusic.play().catch(e => console.error("Erro ao tocar música do menu:", e));
+
     gameOverModal.style.display = 'none';
+
+    // *** IMPORTANTE: Resetar TODAS as variáveis de estado globais aqui ***
     matchOver = false;
-    gameMode = 'pvcpu'; // reseta para o padrão
+    isPaused = false;
+    roundOverState = false;
+    currentRound = 1; // Resetar contagem de rounds
+    player1RoundWins = 0; // Resetar placar
+    player2RoundWins = 0; // Resetar placar
+    projectiles = []; // Limpar projéteis remanescentes
+    screenShakeActive = false; // Resetar tremor de tela
+    currentScreenShakeIntensity = 0;
+    currentScreenShakeDuration = 0;
+    lastTime = 0; // CRUCIAL para um novo início do gameLoop
+
+    // Resetar modo de jogo e configurações da campanha
+    gameMode = 'pvcpu'; // resetar para o padrão
     campaignOpponents = [];
     campaignStage = 0;
+
+    // Limpar objetos dos jogadores completamente para forçar a re-inicialização
+    players = [null, null];
+
+    // Reinicializar as seleções de personagem e arena para o menu
+    initializeSelections();
+
     switchScreen('modeSelect');
 }
 
 restartButton.addEventListener('click', resetToMenu);
 
 
-// ALTERADO: Lógica de fim de round para incluir campanha
+// Lógica de fim de round para incluir campanha
 function handleRoundEnd(roundWinnerPlayer) {
     roundOverState = true;
     roundOverTimer = ROUND_END_DELAY;
@@ -841,7 +879,7 @@ function handleRoundEnd(roundWinnerPlayer) {
     const roundsToWin = Math.ceil(MAX_ROUNDS / 2);
     if (player1RoundWins >= roundsToWin || player2RoundWins >= roundsToWin) {
         matchOver = true;
-        
+
         if (gameMode === 'campaign') {
             setTimeout(() => {
                 if (winnerIndex === 0) { // Jogador venceu a luta
@@ -887,7 +925,7 @@ function getPlayerInputs(playerIndex) {
     let useTouch = false;
     let useKeyboard = false;
 
-    if (gameMode === 'pvcpu' || gameMode === 'campaign') { // ALTERADO
+    if (gameMode === 'pvcpu' || gameMode === 'campaign') {
         useTouch = assignedGamepads.length === 0;
         useKeyboard = !useTouch;
         gp = assignedGamepads[0];
@@ -1040,9 +1078,6 @@ function updateAI(cpu, target, difficulty, deltaTime) {
     if (Math.random() < jumpProb && !cpu.isJumping && !cpu.isCrouching) { let jd = false; if (difficulty==='hard'&&target.isAttacking&&target.attackType?.startsWith('crouch')&&absDistanceX<canAttackRange){jd=true;}else if(difficulty!=='easy'&&Math.random()<0.3){jd=true;}else if(difficulty==='easy'&&Math.random()<0.1){jd=true;} if(jd){cpu.velocityY=JUMP_FORCE_SCALED;cpu.isJumping=true;}}
 }
 
-// ... (O restante do seu código, como updatePlayerState, performAttack, drawPlayer, etc., pode permanecer o mesmo)
-// Nenhuma alteração é necessária nas funções abaixo, pois a lógica da campanha
-// foi implementada no fluxo de telas e no gerenciamento de fim de partida.
 function updatePlayerState(player, deltaTime) {
     if (!player || isPaused || roundOverState) return;
     if (player.actionCooldown > 0) { player.actionCooldown -= deltaTime; if (player.actionCooldown < 0) player.actionCooldown = 0;}
@@ -1081,46 +1116,46 @@ function updatePlayerState(player, deltaTime) {
         return;
     }
     if (player.id === 'magal' && player.performingSpecial) {
-         player.specialAnimTimer -= deltaTime;
-         switch (player.performingSpecial) {
-                case 'magal_setup_bar':
-                    if (player.specialState.barTableX < player.specialState.barTableTargetX) { player.specialState.barTableX = Math.min(player.specialState.barTableTargetX, player.specialState.barTableX + MAGAL_BAR_SLIDE_SPEED); }
-                    else if (player.specialState.barTableX > player.specialState.barTableTargetX) { player.specialState.barTableX = Math.max(player.specialState.barTableTargetX, player.specialState.barTableX - MAGAL_BAR_SLIDE_SPEED); }
-                    if (player.specialAnimTimer <= 0 && player.specialState.barTableX === player.specialState.barTableTargetX) {
-                        player.specialState.bottlesThrown = 0;
-                        player.performingSpecial = 'magal_drink_throw_cycle';
-                        player.specialAnimTimer = MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION;
-                        player.specialState.currentCycleFrame = 0;
-                        player.specialState.throwDelay = MAGAL_SPECIAL_BOTTLE_THROW_POINT_IN_CYCLE;
-                    }
-                    break;
-                case 'magal_drink_throw_cycle':
-                    player.specialState.currentCycleFrame = Math.floor( (MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION - player.specialAnimTimer) / (MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION / 3) ) % 3;
+           player.specialAnimTimer -= deltaTime;
+           switch (player.performingSpecial) {
+                   case 'magal_setup_bar':
+                       if (player.specialState.barTableX < player.specialState.barTableTargetX) { player.specialState.barTableX = Math.min(player.specialState.barTableTargetX, player.specialState.barTableX + MAGAL_BAR_SLIDE_SPEED); }
+                       else if (player.specialState.barTableX > player.specialState.barTableTargetX) { player.specialState.barTableX = Math.max(player.specialState.barTableTargetX, player.specialState.barTableX - MAGAL_BAR_SLIDE_SPEED); }
+                       if (player.specialAnimTimer <= 0 && player.specialState.barTableX === player.specialState.barTableTargetX) {
+                           player.specialState.bottlesThrown = 0;
+                           player.performingSpecial = 'magal_drink_throw_cycle';
+                           player.specialAnimTimer = MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION;
+                           player.specialState.currentCycleFrame = 0;
+                           player.specialState.throwDelay = MAGAL_SPECIAL_BOTTLE_THROW_POINT_IN_CYCLE;
+                       }
+                       break;
+                   case 'magal_drink_throw_cycle':
+                       player.specialState.currentCycleFrame = Math.floor( (MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION - player.specialAnimTimer) / (MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION / 3) ) % 3;
 
-                    if (player.specialState.throwDelay > 0) player.specialState.throwDelay -= deltaTime;
+                       if (player.specialState.throwDelay > 0) player.specialState.throwDelay -= deltaTime;
 
-                    if (player.specialState.throwDelay <= 0 && player.specialState.bottlesThrown < 5) {
-                        if (opponent) player.facingRight = opponent.x > player.x;
-                        projectiles.push({ x: player.facingRight ? player.x + player.width : player.x - MAGAL_SPECIAL_BOTTLE_WIDTH, y: player.y + player.height / 3, width: MAGAL_SPECIAL_BOTTLE_WIDTH, height: MAGAL_SPECIAL_BOTTLE_HEIGHT, velocityX: player.facingRight ? MAGAL_SPECIAL_BOTTLE_SPEED : -MAGAL_SPECIAL_BOTTLE_SPEED, ownerId: player.id, type: 'magal_bottle', isActive: true, color: 'SaddleBrown'});
-                        player.specialState.bottlesThrown++;
-                        player.specialState.throwDelay = MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION + MAGAL_SPECIAL_BOTTLE_THROW_POINT_IN_CYCLE;
-                    }
+                       if (player.specialState.throwDelay <= 0 && player.specialState.bottlesThrown < 5) {
+                           if (opponent) player.facingRight = opponent.x > player.x;
+                           projectiles.push({ x: player.facingRight ? player.x + player.width : player.x - MAGAL_SPECIAL_BOTTLE_WIDTH, y: player.y + player.height / 3, width: MAGAL_SPECIAL_BOTTLE_WIDTH, height: MAGAL_SPECIAL_BOTTLE_HEIGHT, velocityX: player.facingRight ? MAGAL_SPECIAL_BOTTLE_SPEED : -MAGAL_SPECIAL_BOTTLE_SPEED, ownerId: player.id, type: 'magal_bottle', isActive: true, color: 'SaddleBrown'});
+                           player.specialState.bottlesThrown++;
+                           player.specialState.throwDelay = MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION + MAGAL_SPECIAL_BOTTLE_THROW_POINT_IN_CYCLE;
+                       }
 
-                    if (player.specialAnimTimer <= 0) {
-                        if (player.specialState.bottlesThrown < 5) {
-                            player.performingSpecial = 'magal_drink_throw_cycle';
-                            player.specialAnimTimer = MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION;
-                            player.specialState.currentCycleFrame = 0;
-                        } else {
-                            player.performingSpecial = 'magal_disco_dance';
-                            player.specialAnimTimer = MAGAL_SPECIAL_DISCO_DURATION;
-                        }
-                    }
-                    break;
-                case 'magal_disco_dance': if (player.specialAnimTimer <= 0) { player.performingSpecial = 'magal_final_message'; player.specialAnimTimer = MAGAL_SPECIAL_FINAL_MESSAGE_DURATION; } break;
-                case 'magal_final_message': if (player.specialAnimTimer <= 0) { player.performingSpecial = null; player.specialState.barTableVisible = false; } break;
-       }
-        return;
+                       if (player.specialAnimTimer <= 0) {
+                           if (player.specialState.bottlesThrown < 5) {
+                               player.performingSpecial = 'magal_drink_throw_cycle';
+                               player.specialAnimTimer = MAGAL_SPECIAL_DRINK_THROW_CYCLE_DURATION;
+                               player.specialState.currentCycleFrame = 0;
+                           } else {
+                               player.performingSpecial = 'magal_disco_dance';
+                               player.specialAnimTimer = MAGAL_SPECIAL_DISCO_DURATION;
+                           }
+                       }
+                       break;
+                   case 'magal_disco_dance': if (player.specialAnimTimer <= 0) { player.performingSpecial = 'magal_final_message'; player.specialAnimTimer = MAGAL_SPECIAL_FINAL_MESSAGE_DURATION; } break;
+                   case 'magal_final_message': if (player.specialAnimTimer <= 0) { player.performingSpecial = null; player.specialState.barTableVisible = false; } break;
+          }
+           return;
     }
     if (player.id === 'pedro' && player.performingSpecial) {
         player.specialAnimTimer -= deltaTime;
@@ -1209,7 +1244,7 @@ function updatePlayerState(player, deltaTime) {
                 }
                 break;
             case 'bj_teleport_throw_fire':
-                 player.specialState.throwFrame = Math.floor((BJ_SPECIAL_THROW_ANIM_DURATION - player.specialAnimTimer) / (BJ_SPECIAL_THROW_ANIM_DURATION / 2)) % 2;
+                   player.specialState.throwFrame = Math.floor((BJ_SPECIAL_THROW_ANIM_DURATION - player.specialAnimTimer) / (BJ_SPECIAL_THROW_ANIM_DURATION / 2)) % 2;
                 if (player.specialAnimTimer <= BJ_SPECIAL_THROW_ANIM_DURATION / 2 && !player.specialState.projectileLaunchedThisFrame) {
                     projectiles.push({
                         x: player.facingRight ? player.x + player.width : player.x - BJ_CHINELA_WIDTH,
@@ -1256,10 +1291,10 @@ function updatePlayerState(player, deltaTime) {
                 }
                 break;
             case 'joao_post_transform_idle':
-                 if (player.specialAnimTimer <= 0) {
-                    player.performingSpecial = 'joao_dialogue2_display';
-                    player.specialAnimTimer = JOAO_SPECIAL_DIALOGUE2_DURATION;
-                 }
+                   if (player.specialAnimTimer <= 0) {
+                       player.performingSpecial = 'joao_dialogue2_display';
+                       player.specialAnimTimer = JOAO_SPECIAL_DIALOGUE2_DURATION;
+                   }
                 break;
             case 'joao_dialogue2_display':
                 if (player.specialAnimTimer <= 0) {
@@ -1319,14 +1354,14 @@ function updatePlayerState(player, deltaTime) {
 
 
     if (player.knockdownState === 'special_hit_falling') {
-         player.velocityY += GRAVITY * 0.3; player.y += player.velocityY; player.x += player.velocityX;
-         if (player.x <= 0 || player.x + player.width >= canvasWidth) { player.velocityX *= -0.7; player.x = Math.max(0, Math.min(player.x, canvasWidth - player.width)); startScreenShake(SCREEN_SHAKE_INTENSITY + 5, 300); }
-         if (player.y + player.height >= canvasHeight) { player.y = canvasHeight - player.height; player.velocityY = 0; player.velocityX = 0; player.knockdownState = 'special_hit_grounded'; }
-         return;
+           player.velocityY += GRAVITY * 0.3; player.y += player.velocityY; player.x += player.velocityX;
+           if (player.x <= 0 || player.x + player.width >= canvasWidth) { player.velocityX *= -0.7; player.x = Math.max(0, Math.min(player.x, canvasWidth - player.width)); startScreenShake(SCREEN_SHAKE_INTENSITY + 5, 300); }
+           if (player.y + player.height >= canvasHeight) { player.y = canvasHeight - player.height; player.velocityY = 0; player.velocityX = 0; player.knockdownState = 'special_hit_grounded'; }
+           return;
     } else if (player.knockdownState === 'special_hit_grounded') {
-         player.opponentSpecialMessageTimer -= deltaTime;
-         if(player.opponentSpecialMessageTimer <= 0) { player.knockdownState = 'none'; }
-         return;
+           player.opponentSpecialMessageTimer -= deltaTime;
+           if(player.opponentSpecialMessageTimer <= 0) { player.knockdownState = 'none'; }
+           return;
     }
     if (player.knockdownState === 'falling') { player.velocityY += GRAVITY; player.y += player.velocityY; player.x += player.velocityX; if (player.y + player.height >= canvasHeight) { player.y = canvasHeight - player.height; player.velocityY = 0; player.velocityX = 0; player.knockdownState = 'grounded'; player.groundedTimer = GROUNDED_DURATION; startScreenShake(SCREEN_SHAKE_INTENSITY, SCREEN_SHAKE_DURATION_MS);}}
     else if (player.knockdownState === 'grounded') { player.groundedTimer -= deltaTime; if (player.groundedTimer <= 0) player.knockdownState = 'none';}
@@ -1426,15 +1461,15 @@ function updateProjectiles(deltaTime) {
                  }
 
                  if (hitBySpecialProjectile) {
-                      if (proj.type === 'bj_chinela' || !opponent.isDefending) {
+                     if (proj.type === 'bj_chinela' || !opponent.isDefending) {
                          opponent.health -= damageDealt;
                          opponent.hitCounter++;
                          if (opponent.health <= 0) { opponent.health = 0; handleRoundEnd(players.find(p=>p && p.id === proj.ownerId)); }
                          updateHealthBars();
                          proj.isActive = false;
-                      } else if (opponent.isDefending && proj.type !== 'bj_chinela') {
+                     } else if (opponent.isDefending && proj.type !== 'bj_chinela') {
                          proj.isActive = false;
-                      }
+                     }
                  }
              }
         }
@@ -1564,10 +1599,10 @@ function drawPlayer(player) {
     }
 
     if (!currentSpriteKeyToUse || !playerSprites[currentSpriteKeyToUse]) {
-         currentSpriteKeyToUse = player.sprites.idle;
-         if (!playerSprites[currentSpriteKeyToUse]) {
-             console.error(`CRÍTICO: Sprite IDLE ${currentSpriteKeyToUse} para o jogador ${player.id} não foi carregado!`);
-         }
+           currentSpriteKeyToUse = player.sprites.idle;
+           if (!playerSprites[currentSpriteKeyToUse]) {
+               console.error(`CRÍTICO: Sprite IDLE ${currentSpriteKeyToUse} para o jogador ${player.id} não foi carregado!`);
+           }
     }
 
     const spriteToDraw = playerSprites[currentSpriteKeyToUse];
@@ -1619,8 +1654,8 @@ function drawPlayer(player) {
             case 'magal_final_message': drawTextBox(player.x + player.width/2, player.y, "nunca mais eu vou beber, EU JURO!", 180, 12); break;
         }
     }
-     if (player.id === 'bj' && player.performingSpecial === 'bj_dialogue') {
-         drawTextBox(player.x + player.width/2, player.y, "Hora de demonstrar os meus poderes!", 200, 14, 'rgba(50,20,0,0.8)', '#FFD700');
+      if (player.id === 'bj' && player.performingSpecial === 'bj_dialogue') {
+          drawTextBox(player.x + player.width/2, player.y, "Hora de demonstrar os meus poderes!", 200, 14, 'rgba(50,20,0,0.8)', '#FFD700');
     }
     if (player.id === 'joao' && player.performingSpecial) {
         if (player.performingSpecial === 'joao_dialogue1') {
@@ -1635,13 +1670,18 @@ function drawPlayer(player) {
 }
 
 function gameLoop(timestamp) {
-    // ALTERADO: A verificação de matchOver agora não para o loop se for uma vitória na campanha (para permitir a transição)
+    // A verificação de matchOver agora não para o loop se for uma vitória na campanha (para permitir a transição)
     if (currentScreen !== 'game' || (matchOver && gameMode !== 'campaign')) {
         return;
     }
     if (isPaused) { requestAnimationFrame(gameLoop); return; }
 
-    const deltaTime = (timestamp - lastTime) || 16.66; lastTime = timestamp;
+    // Garante que lastTime é inicializado corretamente
+    if (lastTime === 0) {
+        lastTime = timestamp - (1000 / 60); // Simula 1 frame antes para um deltaTime inicial razoável
+    }
+    const deltaTime = timestamp - lastTime;
+    lastTime = timestamp;
 
     if (roundOverState) {
         roundOverTimer -= deltaTime;
@@ -1668,8 +1708,8 @@ function gameLoop(timestamp) {
         });
 
         handlePlayerControls(0); // P1
-        
-        // ALTERADO: Lógica de IA para campanha e pvcpu
+
+        // Lógica de IA para campanha e pvcpu
         const isCPUOpponent = (gameMode === 'pvcpu' || gameMode === 'campaign');
         if (isCPUOpponent && players[1] && !matchOver) {
             updateAI(players[1], players[0], selectedDifficulty, deltaTime);
